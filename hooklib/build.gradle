@@ -1,0 +1,185 @@
+/*
+ * Copyright (c) 2020 HookLib by sfandroid.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+apply plugin: 'com.github.dcendents.android-maven'
+apply plugin: 'com.jfrog.bintray'
+apply plugin: 'com.android.library'
+apply plugin: 'maven-publish'
+
+def hookLib = getRootProject().ext.hooklib
+def bintrayConf = getRootProject().ext.bintray
+def personal = getRootProject().ext.personal
+
+version = hookLib.versionName
+group = bintrayConf.groupId
+
+android {
+    compileSdkVersion 29
+    buildToolsVersion "29.0.2"
+
+
+    defaultConfig {
+        minSdkVersion 15
+        targetSdkVersion 29
+        versionCode hookLib.versionCode
+        versionName hookLib.versionName
+
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        consumerProguardFiles 'consumer-rules.pro'
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+    }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+}
+
+dependencies {
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
+
+    testImplementation 'junit:junit:4.12'
+    androidTestImplementation 'androidx.test.ext:junit:1.1.2'
+    androidTestImplementation fileTree(dir: 'libs', include: ['*.aar'])
+    androidTestImplementation 'androidx.test.espresso:espresso-core:3.3.0'
+}
+
+install {
+    repositories.mavenInstaller {
+        pom {
+            project {
+                packaging 'aar'
+                name hookLib.artifactId
+                description 'Universal and convenient Hook middle layer'
+                url personal.githubUrl
+
+                licenses {
+                    license {
+                        name 'The Apache Software License, Version 2.0'
+                        url 'http://www.apache.org/licenses/LICENSE-2.0.txt'
+                    }
+                }
+
+                developers {
+                    developer {
+                        id bintrayConf.userOrg
+                        name bintrayConf.userOrg
+                    }
+                }
+
+                scm {
+                    connection personal.gitUrl
+                    developerConnection personal.gitUrl
+                    url personal.githubUrl
+                }
+            }
+        }
+    }
+}
+
+
+// Because the components are created only during the afterEvaluate phase, you must
+// configure your publications using the afterEvaluate() lifecycle method.
+afterEvaluate {
+    publishing {
+        publications {
+            // Creates a Maven publication called "release".
+            release(MavenPublication) {
+                // Applies the component for the release build variant.
+                from components.release
+
+                // You can then customize attributes of the publication as shown below.
+                groupId = bintrayConf.groupId
+                artifactId = hookLib.artifactId
+                version = hookLib.versionName
+            }
+            // Creates a Maven publication called “debug”.
+            debug(MavenPublication) {
+                // Applies the component for the debug build variant.
+                from components.debug
+
+                groupId = bintrayConf.groupId
+                artifactId = hookLib.artifactId + '-debug'
+                version = hookLib.versionName
+            }
+        }
+
+        repositories {
+            maven {
+                // change URLs to point to your repos, e.g. http://my.org/repo
+                url = "D:\\maven-local\\repo"
+            }
+        }
+    }
+}
+
+tasks.withType(JavaCompile) {
+    options.encoding = "UTF-8"
+    options.compilerArgs << "-Xlint:unchecked"
+}
+
+task sourcesJar(type: Jar) {
+    from android.sourceSets.main.java.srcDirs
+    classifier = 'sources'
+}
+
+task javadoc(type: Javadoc) {
+    source = android.sourceSets.main.java.srcDirs
+    classpath += project.files(android.getBootClasspath().join(File.pathSeparator))
+    // destinationDir = file("../javadoc/")
+    failOnError false // 忽略注释语法错误，如果用jdk1.8你的注释写的不规范就编译不过。
+    options.encoding = 'UTF-8'
+    options.charSet = 'UTF-8'
+    options.author = true
+    options.version = true
+}
+
+
+task javadocJar(type: Jar, dependsOn: javadoc) {
+    classifier = 'javadoc'
+    from javadoc.destinationDir
+}
+artifacts {
+    archives javadocJar
+    archives sourcesJar
+}
+Properties properties = new Properties()
+properties.load(project.rootProject.file('local.properties').newDataInputStream())
+
+bintray {
+    user = properties.getProperty("bintray.user")
+    key = properties.getProperty("bintray.apikey")
+    configurations = ['archives']
+    pkg {
+        repo = bintrayConf.repo  //Repository名字 需要自己在bintray网站上先添加
+        name = hookLib.artifactId
+        userOrg = bintrayConf.userOrg//Bintray的组织中,你的id
+        websiteUrl = personal.githubUrl
+        vcsUrl = personal.gitUrl
+        licenses = ["Apache-2.0"]
+        publish = true // 是否是公开项目。
+        version {
+            name = hookLib.versionName
+            desc = 'Universal and convenient Hook middle layer'
+            released = new Date()
+            vcsTag = 'v' + hookLib.versionName
+        }
+    }
+}
