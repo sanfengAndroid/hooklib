@@ -88,10 +88,10 @@ public abstract class TypeLiteral<T> implements Typed<T> {
      */
     protected TypeLiteral() {
         this.value =
-                Validate.notNull(TypeUtils.getTypeArguments(getClass(), TypeLiteral.class).get(T),
-                        "%s does not assign type parameter %s", getClass(), TypeUtils.toLongString(T));
+                Validate.notNull(TypeUtil.getTypeArguments(getClass(), TypeLiteral.class).get(T),
+                        "%s does not assign type parameter %s", getClass(), TypeUtil.toLongString(T));
 
-        this.toString = String.format("%s<%s>", TypeLiteral.class.getSimpleName(), TypeUtils.toString(value));
+        this.toString = String.format("%s<%s>", TypeLiteral.class.getSimpleName(), TypeUtil.toString(value));
     }
 
     @Override
@@ -103,7 +103,7 @@ public abstract class TypeLiteral<T> implements Typed<T> {
             return false;
         }
         final TypeLiteral<?> other = (TypeLiteral<?>) obj;
-        return TypeUtils.equals(value, other.value);
+        return TypeUtil.equals(value, other.value);
     }
 
     @Override

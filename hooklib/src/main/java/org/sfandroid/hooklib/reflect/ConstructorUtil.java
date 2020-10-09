@@ -16,8 +16,8 @@
 
 package org.sfandroid.hooklib.reflect;
 
-import org.sfandroid.hooklib.utils.ArrayUtils;
-import org.sfandroid.hooklib.utils.ClassUtils;
+import org.sfandroid.hooklib.utils.ArrayUtil;
+import org.sfandroid.hooklib.utils.ClassUtil;
 import org.sfandroid.hooklib.utils.Validate;
 
 import java.lang.reflect.Constructor;
@@ -27,7 +27,7 @@ import java.lang.reflect.Modifier;
 
 /**
  * <p> Utility reflection methods focused on constructors, modeled after
- * {@link MethodUtils}. </p>
+ * {@link MethodUtil}. </p>
  *
  * <h3>Known Limitations</h3> <h4>Accessing Public Constructors In A Default
  * Access Superclass</h4> <p>There is an issue when invoking {@code public} constructors
@@ -36,7 +36,7 @@ import java.lang.reflect.Modifier;
  * {@link IllegalAccessException} is thrown if the constructor is
  * invoked.</p>
  *
- * <p>{@link ConstructorUtils} contains a workaround for this situation: it
+ * <p>{@link ConstructorUtil} contains a workaround for this situation: it
  * will attempt to call {@link java.lang.reflect.AccessibleObject#setAccessible(boolean)} on this constructor. If this
  * call succeeds, then the method can be invoked as normal. This call will only
  * succeed when the application has sufficient security privileges. If this call
@@ -44,7 +44,7 @@ import java.lang.reflect.Modifier;
  *
  * @since 2.5
  */
-public class ConstructorUtils {
+public class ConstructorUtil {
 
     /**
      * <p>ConstructorUtils instances should NOT be constructed in standard
@@ -54,7 +54,7 @@ public class ConstructorUtils {
      * <p>This constructor is {@code public} to permit tools that require a JavaBean
      * instance to operate.</p>
      */
-    public ConstructorUtils() {
+    public ConstructorUtil() {
         super();
     }
 
@@ -79,8 +79,8 @@ public class ConstructorUtils {
     public static <T> T invokeConstructor(final Class<T> cls, Object... args)
             throws NoSuchMethodException, IllegalAccessException, InvocationTargetException,
             InstantiationException {
-        args = ArrayUtils.nullToEmpty(args);
-        final Class<?>[] parameterTypes = ClassUtils.toClass(args);
+        args = ArrayUtil.nullToEmpty(args);
+        final Class<?>[] parameterTypes = ClassUtil.toClass(args);
         return invokeConstructor(cls, args, parameterTypes);
     }
 
@@ -106,8 +106,8 @@ public class ConstructorUtils {
     public static <T> T invokeConstructor(final Class<T> cls, Object[] args, Class<?>[] parameterTypes)
             throws NoSuchMethodException, IllegalAccessException, InvocationTargetException,
             InstantiationException {
-        args = ArrayUtils.nullToEmpty(args);
-        parameterTypes = ArrayUtils.nullToEmpty(parameterTypes);
+        args = ArrayUtil.nullToEmpty(args);
+        parameterTypes = ArrayUtil.nullToEmpty(parameterTypes);
         final Constructor<T> ctor = getMatchingAccessibleConstructor(cls, parameterTypes);
         if (ctor == null) {
             throw new NoSuchMethodException(
@@ -115,7 +115,7 @@ public class ConstructorUtils {
         }
         if (ctor.isVarArgs()) {
             Class<?>[] methodParameterTypes = ctor.getParameterTypes();
-            args = MethodUtils.getVarArgs(args, methodParameterTypes);
+            args = MethodUtil.getVarArgs(args, methodParameterTypes);
         }
         return ctor.newInstance(args);
     }
@@ -141,8 +141,8 @@ public class ConstructorUtils {
     public static <T> T invokeExactConstructor(final Class<T> cls, Object... args)
             throws NoSuchMethodException, IllegalAccessException, InvocationTargetException,
             InstantiationException {
-        args = ArrayUtils.nullToEmpty(args);
-        final Class<?> parameterTypes[] = ClassUtils.toClass(args);
+        args = ArrayUtil.nullToEmpty(args);
+        final Class<?> parameterTypes[] = ClassUtil.toClass(args);
         return invokeExactConstructor(cls, args, parameterTypes);
     }
 
@@ -168,8 +168,8 @@ public class ConstructorUtils {
     public static <T> T invokeExactConstructor(final Class<T> cls, Object[] args,
                                                Class<?>[] parameterTypes) throws NoSuchMethodException, IllegalAccessException,
             InvocationTargetException, InstantiationException {
-        args = ArrayUtils.nullToEmpty(args);
-        parameterTypes = ArrayUtils.nullToEmpty(parameterTypes);
+        args = ArrayUtil.nullToEmpty(args);
+        parameterTypes = ArrayUtil.nullToEmpty(parameterTypes);
         final Constructor<T> ctor = getAccessibleConstructor(cls, parameterTypes);
         if (ctor == null) {
             throw new NoSuchMethodException(
@@ -217,7 +217,7 @@ public class ConstructorUtils {
      */
     public static <T> Constructor<T> getAccessibleConstructor(final Constructor<T> ctor) {
         Validate.notNull(ctor, "constructor cannot be null");
-        return MemberUtils.isAccessible(ctor)
+        return MemberUtil.isAccessible(ctor)
                 && isAccessible(ctor.getDeclaringClass()) ? ctor : null;
     }
 
@@ -246,7 +246,7 @@ public class ConstructorUtils {
         // most of the time this works and it's much faster
         try {
             final Constructor<T> ctor = cls.getConstructor(parameterTypes);
-            MemberUtils.setAccessibleWorkaround(ctor);
+            MemberUtil.setAccessibleWorkaround(ctor);
             return ctor;
         } catch (final NoSuchMethodException e) { // NOPMD - Swallow
         }
@@ -260,12 +260,12 @@ public class ConstructorUtils {
         // return best match:
         for (Constructor<?> ctor : ctors) {
             // compare parameters
-            if (MemberUtils.isMatchingConstructor(ctor, parameterTypes)) {
+            if (MemberUtil.isMatchingConstructor(ctor, parameterTypes)) {
                 // get accessible version of constructor
                 ctor = getAccessibleConstructor(ctor);
                 if (ctor != null) {
-                    MemberUtils.setAccessibleWorkaround(ctor);
-                    if (result == null || MemberUtils.compareConstructorFit(ctor, result, parameterTypes) < 0) {
+                    MemberUtil.setAccessibleWorkaround(ctor);
+                    if (result == null || MemberUtil.compareConstructorFit(ctor, result, parameterTypes) < 0) {
                         // temporary variable for annotation, see comment above (1)
                         @SuppressWarnings("unchecked") final Constructor<T> constructor = (Constructor<T>) ctor;
                         result = constructor;

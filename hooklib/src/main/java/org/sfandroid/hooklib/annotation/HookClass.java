@@ -16,7 +16,8 @@
 
 package org.sfandroid.hooklib.annotation;
 
-import org.sfandroid.hooklib.utils.ObjectUtils;
+import org.sfandroid.hooklib.utils.ObjectUtil;
+import org.sfandroid.hooklib.utils.StringUtil;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Inherited;
@@ -35,16 +36,16 @@ import java.lang.annotation.Target;
 @Inherited
 public @interface HookClass {
     /**
-     * 针对不可访问类时设置,该配置优先与{@link #cls()}
+     * 针对不可访问类时设置,该配置优先与{@link #clazz()}
      *
      * @return Hook类名
      */
-    String value() default "";
+    String value() default StringUtil.EMPTY;
 
     /**
      * 系统类或能直接访问的类可以设置,默认值时可从上级继承{@link #value()}
      *
      * @return Hook类的类型
      */
-    Class<?> cls() default ObjectUtils.Null.class;
+    Class<?> clazz() default ObjectUtil.Null.class;
 }

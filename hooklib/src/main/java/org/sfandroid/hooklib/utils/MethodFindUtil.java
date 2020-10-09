@@ -30,7 +30,7 @@ import java.util.List;
  * @author beichen
  * @date 2019/10/08
  */
-public class MethodFindUtils {
+public class MethodFindUtil {
 
     public static Method findMethodByReturnType(Class<?> cls, Class<?> returnType, final boolean findSuper, final boolean autoBox, HookCompatibleType compatible) {
         return findMethod(cls, returnType, null, null, findSuper, autoBox, compatible, FindType.RETURN.getValue());
@@ -132,13 +132,13 @@ public class MethodFindUtils {
         if (compatible == null) {
             compatible = HookCompatibleType.EQUAL;
         }
-        if (ObjectUtils.isNullClass(returnType)) {
+        if (ObjectUtil.isNullClass(returnType)) {
             type = type & ~FindType.RETURN.getValue();
         }
-        if (ObjectUtils.isNullClasses(parameterTypes)) {
+        if (ObjectUtil.isNullClasses(parameterTypes)) {
             type = type & ~FindType.PARAMS.getValue();
         }
-        if (ObjectUtils.isNullClasses(exceptionTypes)) {
+        if (ObjectUtil.isNullClasses(exceptionTypes)) {
             type = type & ~FindType.EXCEPTION.getValue();
         }
         if ((type & FindType.PARAMS.getValue()) != 0) {
@@ -183,7 +183,7 @@ public class MethodFindUtils {
         Method[] methodArray = getAllMethod(cls, findSuper);
         List<Method> list = new ArrayList<>();
         for (Method method : methodArray) {
-            if (StringUtils.equals(method.getName(), methodName)) {
+            if (StringUtil.equals(method.getName(), methodName)) {
                 list.add(method);
             }
         }
@@ -229,16 +229,16 @@ public class MethodFindUtils {
         if (compatible == null) {
             compatible = HookCompatibleType.EQUAL;
         }
-        if (StringUtils.isEmpty(methodName)) {
+        if (StringUtil.isEmpty(methodName)) {
             type = type & ~FindType.NAME.getValue();
         }
-        if (ObjectUtils.isNullClass(returnType)) {
+        if (ObjectUtil.isNullClass(returnType)) {
             type = type & ~FindType.RETURN.getValue();
         }
-        if (ObjectUtils.isNullClasses(parameterTypes)) {
+        if (ObjectUtil.isNullClasses(parameterTypes)) {
             type = type & ~FindType.PARAMS.getValue();
         }
-        if (ObjectUtils.isNullClasses(exceptionTypes)) {
+        if (ObjectUtil.isNullClasses(exceptionTypes)) {
             type = type & ~FindType.EXCEPTION.getValue();
         }
         if ((type & FindType.PARAMS.getValue()) != 0) {
@@ -248,7 +248,7 @@ public class MethodFindUtils {
         }
         for (Method method : methodArray) {
             if ((type & FindType.NAME.getValue()) != 0) {
-                if (!StringUtils.equals(methodName, method.getName())) {
+                if (!StringUtil.equals(methodName, method.getName())) {
                     continue;
                 }
             }
@@ -305,7 +305,7 @@ public class MethodFindUtils {
         if (phs == null) {
             phs = new HookFieldConfigure[parameterTypes.length];
         }
-        for (Constructor ctor : cls.getConstructors()) {
+        for (Constructor ctor : cls.getDeclaredConstructors()) {
             if (equalClasses(parameterTypes, phs, ctor.getParameterTypes(), autoBox, compatible)) {
                 return ctor;
             }
@@ -339,7 +339,7 @@ public class MethodFindUtils {
     public static List<Method> getMethodsWithAnnotation(final Class<?> cls, final Class<? extends Annotation> annotationCls, final boolean searchSupers) {
         Validate.isTrue(cls != null, "The class must not be null");
         Validate.isTrue(annotationCls != null, "The annotation class must not be null");
-        final List<Class<?>> classes = (searchSupers ? ClassUtils.getAllSuperclasses(cls) : new ArrayList<>());
+        final List<Class<?>> classes = (searchSupers ? ClassUtil.getAllSuperclasses(cls) : new ArrayList<>());
         classes.add(0, cls);
         final List<Method> annotatedMethods = new ArrayList<>();
         for (final Class<?> acls : classes) {
@@ -365,7 +365,7 @@ public class MethodFindUtils {
         Validate.notNull(child, "Null method not allowed.");
         Validate.notNull(parent, "Null method not allowed.");
         if (parent.getDeclaringClass().isAssignableFrom(child.getDeclaringClass())) {
-            if (!StringUtils.equals(child.getName(), parent.getName())) {
+            if (!StringUtil.equals(child.getName(), parent.getName())) {
                 return false;
             }
             if (!parent.getReturnType().isAssignableFrom(child.getReturnType())) {
@@ -394,14 +394,14 @@ public class MethodFindUtils {
      * @return
      */
     public static boolean equalClasses(Class<?>[] classArray, HookFieldConfigure[] conf, Class<?>[] toClassArray, boolean autoBox, HookCompatibleType compatible) {
-        if (!ArrayUtils.isSameLength(classArray, toClassArray)) {
+        if (!ArrayUtil.isSameLength(classArray, toClassArray)) {
             return false;
         }
         if (classArray == null) {
-            classArray = ArrayUtils.EMPTY_CLASS_ARRAY;
+            classArray = ArrayUtil.EMPTY_CLASS_ARRAY;
         }
         if (toClassArray == null) {
-            toClassArray = ArrayUtils.EMPTY_CLASS_ARRAY;
+            toClassArray = ArrayUtil.EMPTY_CLASS_ARRAY;
         }
         if (conf == null) {
             conf = new HookFieldConfigure[classArray.length];
@@ -414,17 +414,17 @@ public class MethodFindUtils {
             HookCompatibleType type = conf[i] == null ? compatible : conf[i].compatible();
             switch (type) {
                 case EQUAL:
-                    if (!ClassUtils.equal(classArray[i], toClassArray[i], boxing, false)) {
+                    if (!ClassUtil.equal(classArray[i], toClassArray[i], boxing, false)) {
                         return false;
                     }
                     break;
                 case UP:
-                    if (!ClassUtils.equal(classArray[i], toClassArray[i], boxing, true)) {
+                    if (!ClassUtil.equal(classArray[i], toClassArray[i], boxing, true)) {
                         return false;
                     }
                     break;
                 case DOWN:
-                    if (!ClassUtils.equal(toClassArray[i], classArray[i], boxing, true)) {
+                    if (!ClassUtil.equal(toClassArray[i], classArray[i], boxing, true)) {
                         return false;
                     }
                     break;
@@ -442,13 +442,13 @@ public class MethodFindUtils {
         boolean z = true;
         switch (type) {
             case EQUAL:
-                z = ClassUtils.equal(cls, toClass, autoBox);
+                z = ClassUtil.equal(cls, toClass, autoBox);
                 break;
             case UP:
-                z = ClassUtils.equal(cls, toClass, autoBox, true);
+                z = ClassUtil.equal(cls, toClass, autoBox, true);
                 break;
             case DOWN:
-                z = ClassUtils.equal(toClass, cls, autoBox, true);
+                z = ClassUtil.equal(toClass, cls, autoBox, true);
                 break;
             default:
                 break;
@@ -463,7 +463,7 @@ public class MethodFindUtils {
         List<Method> methodArray = new ArrayList<>(Arrays.asList(cls.getDeclaredMethods()));
         // 这里有个隐形条件,如果子类找到了这个方法则忽略父类的方法,否者在Hook的过程中会导致Hook多余的父类函数
         if (findSuper) {
-            List<Class<?>> superclassList = ClassUtils.getAllSuperclasses(cls);
+            List<Class<?>> superclassList = ClassUtil.getAllSuperclasses(cls);
             if (superclassList != null) {
                 for (Class<?> klass : superclassList) {
                     for (Method parent : klass.getDeclaredMethods()) {

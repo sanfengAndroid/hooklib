@@ -16,8 +16,8 @@
 
 package org.sfandroid.hooklib.reflect;
 
-import org.sfandroid.hooklib.utils.ArrayUtils;
-import org.sfandroid.hooklib.utils.ClassUtils;
+import org.sfandroid.hooklib.utils.ArrayUtil;
+import org.sfandroid.hooklib.utils.ClassUtil;
 import org.sfandroid.hooklib.utils.Validate;
 
 import java.lang.annotation.Annotation;
@@ -47,7 +47,7 @@ import java.util.Set;
  * Reflection locates these methods fine and correctly assigns them as {@code public}.
  * However, an {@link IllegalAccessException} is thrown if the method is invoked.</p>
  *
- * <p>{@link MethodUtils} contains a workaround for this situation.
+ * <p>{@link MethodUtil} contains a workaround for this situation.
  * It will attempt to call {@link java.lang.reflect.AccessibleObject#setAccessible(boolean)} on this method.
  * If this call succeeds, then the method can be invoked as normal.
  * This call will only succeed when the application has sufficient security privileges.
@@ -55,17 +55,17 @@ import java.util.Set;
  *
  * @since 2.5
  */
-public class MethodUtils {
+public class MethodUtil {
 
     /**
-     * <p>{@link MethodUtils} instances should NOT be constructed in standard programming.
+     * <p>{@link MethodUtil} instances should NOT be constructed in standard programming.
      * Instead, the class should be used as
      * {@code MethodUtils.getAccessibleMethod(method)}.</p>
      *
      * <p>This constructor is {@code public} to permit tools that require a JavaBean
      * instance to operate.</p>
      */
-    public MethodUtils() {
+    public MethodUtil() {
         super();
     }
 
@@ -88,7 +88,7 @@ public class MethodUtils {
      */
     public static Object invokeMethod(final Object object, final String methodName) throws NoSuchMethodException,
             IllegalAccessException, InvocationTargetException {
-        return invokeMethod(object, methodName, ArrayUtils.EMPTY_OBJECT_ARRAY, null);
+        return invokeMethod(object, methodName, ArrayUtil.EMPTY_OBJECT_ARRAY, null);
     }
 
     /**
@@ -109,7 +109,7 @@ public class MethodUtils {
      */
     public static Object invokeMethod(final Object object, final boolean forceAccess, final String methodName)
             throws NoSuchMethodException, IllegalAccessException, InvocationTargetException {
-        return invokeMethod(object, forceAccess, methodName, ArrayUtils.EMPTY_OBJECT_ARRAY, null);
+        return invokeMethod(object, forceAccess, methodName, ArrayUtil.EMPTY_OBJECT_ARRAY, null);
     }
 
     /**
@@ -136,8 +136,8 @@ public class MethodUtils {
     public static Object invokeMethod(final Object object, final String methodName,
                                       Object... args) throws NoSuchMethodException,
             IllegalAccessException, InvocationTargetException {
-        args = ArrayUtils.nullToEmpty(args);
-        final Class<?>[] parameterTypes = ClassUtils.toClass(args);
+        args = ArrayUtil.nullToEmpty(args);
+        final Class<?>[] parameterTypes = ClassUtil.toClass(args);
         return invokeMethod(object, methodName, args, parameterTypes);
     }
 
@@ -165,8 +165,8 @@ public class MethodUtils {
     public static Object invokeMethod(final Object object, final boolean forceAccess, final String methodName,
                                       Object... args) throws NoSuchMethodException,
             IllegalAccessException, InvocationTargetException {
-        args = ArrayUtils.nullToEmpty(args);
-        final Class<?>[] parameterTypes = ClassUtils.toClass(args);
+        args = ArrayUtil.nullToEmpty(args);
+        final Class<?>[] parameterTypes = ClassUtil.toClass(args);
         return invokeMethod(object, forceAccess, methodName, args, parameterTypes);
     }
 
@@ -192,8 +192,8 @@ public class MethodUtils {
                                       Object[] args, Class<?>[] parameterTypes)
             throws NoSuchMethodException, IllegalAccessException,
             InvocationTargetException {
-        parameterTypes = ArrayUtils.nullToEmpty(parameterTypes);
-        args = ArrayUtils.nullToEmpty(args);
+        parameterTypes = ArrayUtil.nullToEmpty(parameterTypes);
+        args = ArrayUtil.nullToEmpty(args);
 
         final String messagePrefix;
         Method method = null;
@@ -278,7 +278,7 @@ public class MethodUtils {
      */
     public static Object invokeExactMethod(final Object object, final String methodName) throws NoSuchMethodException,
             IllegalAccessException, InvocationTargetException {
-        return invokeExactMethod(object, methodName, ArrayUtils.EMPTY_OBJECT_ARRAY, null);
+        return invokeExactMethod(object, methodName, ArrayUtil.EMPTY_OBJECT_ARRAY, null);
     }
 
     /**
@@ -300,8 +300,8 @@ public class MethodUtils {
     public static Object invokeExactMethod(final Object object, final String methodName,
                                            Object... args) throws NoSuchMethodException,
             IllegalAccessException, InvocationTargetException {
-        args = ArrayUtils.nullToEmpty(args);
-        final Class<?>[] parameterTypes = ClassUtils.toClass(args);
+        args = ArrayUtil.nullToEmpty(args);
+        final Class<?>[] parameterTypes = ClassUtil.toClass(args);
         return invokeExactMethod(object, methodName, args, parameterTypes);
     }
 
@@ -327,8 +327,8 @@ public class MethodUtils {
                                            Object[] args, Class<?>[] parameterTypes)
             throws NoSuchMethodException, IllegalAccessException,
             InvocationTargetException {
-        args = ArrayUtils.nullToEmpty(args);
-        parameterTypes = ArrayUtils.nullToEmpty(parameterTypes);
+        args = ArrayUtil.nullToEmpty(args);
+        parameterTypes = ArrayUtil.nullToEmpty(parameterTypes);
         final Method method = getAccessibleMethod(object.getClass(), methodName,
                 parameterTypes);
         if (method == null) {
@@ -361,8 +361,8 @@ public class MethodUtils {
                                                  Object[] args, Class<?>[] parameterTypes)
             throws NoSuchMethodException, IllegalAccessException,
             InvocationTargetException {
-        args = ArrayUtils.nullToEmpty(args);
-        parameterTypes = ArrayUtils.nullToEmpty(parameterTypes);
+        args = ArrayUtil.nullToEmpty(args);
+        parameterTypes = ArrayUtil.nullToEmpty(parameterTypes);
         final Method method = getAccessibleMethod(cls, methodName, parameterTypes);
         if (method == null) {
             throw new NoSuchMethodException("No such accessible method: "
@@ -397,8 +397,8 @@ public class MethodUtils {
     public static Object invokeStaticMethod(final Class<?> cls, final String methodName,
                                             Object... args) throws NoSuchMethodException,
             IllegalAccessException, InvocationTargetException {
-        args = ArrayUtils.nullToEmpty(args);
-        final Class<?>[] parameterTypes = ClassUtils.toClass(args);
+        args = ArrayUtil.nullToEmpty(args);
+        final Class<?>[] parameterTypes = ClassUtil.toClass(args);
         return invokeStaticMethod(cls, methodName, args, parameterTypes);
     }
 
@@ -426,8 +426,8 @@ public class MethodUtils {
                                             Object[] args, Class<?>[] parameterTypes)
             throws NoSuchMethodException, IllegalAccessException,
             InvocationTargetException {
-        args = ArrayUtils.nullToEmpty(args);
-        parameterTypes = ArrayUtils.nullToEmpty(parameterTypes);
+        args = ArrayUtil.nullToEmpty(args);
+        parameterTypes = ArrayUtil.nullToEmpty(parameterTypes);
         final Method method = getMatchingAccessibleMethod(cls, methodName,
                 parameterTypes);
         if (method == null) {
@@ -473,13 +473,13 @@ public class MethodUtils {
         Class<?> varArgComponentType = methodParameterTypes[methodParameterTypes.length - 1].getComponentType();
         int varArgLength = args.length - methodParameterTypes.length + 1;
 
-        Object varArgsArray = Array.newInstance(ClassUtils.primitiveToWrapper(varArgComponentType), varArgLength);
+        Object varArgsArray = Array.newInstance(ClassUtil.primitiveToWrapper(varArgComponentType), varArgLength);
         // Copy the variadic arguments into the varargs array.
         System.arraycopy(args, methodParameterTypes.length - 1, varArgsArray, 0, varArgLength);
 
         if (varArgComponentType.isPrimitive()) {
             // unbox from wrapper type to primitive type
-            varArgsArray = ArrayUtils.toPrimitive(varArgsArray);
+            varArgsArray = ArrayUtil.toPrimitive(varArgsArray);
         }
 
         // Store the varargs array in the last position of the array to return
@@ -509,8 +509,8 @@ public class MethodUtils {
     public static Object invokeExactStaticMethod(final Class<?> cls, final String methodName,
                                                  Object... args) throws NoSuchMethodException,
             IllegalAccessException, InvocationTargetException {
-        args = ArrayUtils.nullToEmpty(args);
-        final Class<?>[] parameterTypes = ClassUtils.toClass(args);
+        args = ArrayUtil.nullToEmpty(args);
+        final Class<?>[] parameterTypes = ClassUtil.toClass(args);
         return invokeExactStaticMethod(cls, methodName, args, parameterTypes);
     }
 
@@ -545,7 +545,7 @@ public class MethodUtils {
      * @return The accessible method
      */
     public static Method getAccessibleMethod(Method method) {
-        if (!MemberUtils.isAccessible(method)) {
+        if (!MemberUtil.isAccessible(method)) {
             return null;
         }
         // If the declaring class is public, we are done
@@ -668,7 +668,7 @@ public class MethodUtils {
                                                      final String methodName, final Class<?>... parameterTypes) {
         try {
             final Method method = cls.getMethod(methodName, parameterTypes);
-            MemberUtils.setAccessibleWorkaround(method);
+            MemberUtil.setAccessibleWorkaround(method);
             return method;
         } catch (final NoSuchMethodException e) { // NOPMD - Swallow the exception
         }
@@ -678,10 +678,10 @@ public class MethodUtils {
         for (final Method method : methods) {
             // compare name and parameters
             if (method.getName().equals(methodName) &&
-                    MemberUtils.isMatchingMethod(method, parameterTypes)) {
+                    MemberUtil.isMatchingMethod(method, parameterTypes)) {
                 // get accessible version of method
                 final Method accessibleMethod = getAccessibleMethod(method);
-                if (accessibleMethod != null && (bestMatch == null || MemberUtils.compareMethodFit(
+                if (accessibleMethod != null && (bestMatch == null || MemberUtil.compareMethodFit(
                         accessibleMethod,
                         bestMatch,
                         parameterTypes) < 0)) {
@@ -690,7 +690,7 @@ public class MethodUtils {
             }
         }
         if (bestMatch != null) {
-            MemberUtils.setAccessibleWorkaround(bestMatch);
+            MemberUtil.setAccessibleWorkaround(bestMatch);
         }
         return bestMatch;
     }
@@ -712,18 +712,18 @@ public class MethodUtils {
 
         // Address methods in superclasses
         Method[] methodArray = cls.getDeclaredMethods();
-        List<Class<?>> superclassList = ClassUtils.getAllSuperclasses(cls);
+        List<Class<?>> superclassList = ClassUtil.getAllSuperclasses(cls);
         for (Class<?> klass : superclassList) {
-            methodArray = ArrayUtils.addAll(methodArray, klass.getDeclaredMethods());
+            methodArray = ArrayUtil.addAll(methodArray, klass.getDeclaredMethods());
         }
 
         Method inexactMatch = null;
         for (Method method : methodArray) {
             if (methodName.equals(method.getName()) &&
-                    ArrayUtils.isEquals(parameterTypes, method.getParameterTypes())) {
+                    ArrayUtil.isEquals(parameterTypes, method.getParameterTypes())) {
                 return method;
             } else if (methodName.equals(method.getName()) &&
-                    ClassUtils.isAssignable(parameterTypes, method.getParameterTypes(), true)) {
+                    ClassUtil.isAssignable(parameterTypes, method.getParameterTypes(), true)) {
                 if (inexactMatch == null) {
                     inexactMatch = method;
                 } else if (distance(parameterTypes, method.getParameterTypes())
@@ -747,15 +747,15 @@ public class MethodUtils {
     private static int distance(Class<?>[] classArray, Class<?>[] toClassArray) {
         int answer = 0;
 
-        if (!ClassUtils.isAssignable(classArray, toClassArray, true)) {
+        if (!ClassUtil.isAssignable(classArray, toClassArray, true)) {
             return -1;
         }
         for (int offset = 0; offset < classArray.length; offset++) {
             // Note InheritanceUtils.distance() uses different scoring system.
             if (classArray[offset].equals(toClassArray[offset])) {
                 continue;
-            } else if (ClassUtils.isAssignable(classArray[offset], toClassArray[offset], true)
-                    && !ClassUtils.isAssignable(classArray[offset], toClassArray[offset], false)) {
+            } else if (ClassUtil.isAssignable(classArray[offset], toClassArray[offset], true)
+                    && !ClassUtil.isAssignable(classArray[offset], toClassArray[offset], false)) {
                 answer++;
             } else {
                 answer = answer + 2;
@@ -774,7 +774,7 @@ public class MethodUtils {
      * @throws NullPointerException if the specified method is {@code null}
      * @since 3.2
      */
-    public static Set<Method> getOverrideHierarchy(final Method method, final ClassUtils.Interfaces interfacesBehavior) {
+    public static Set<Method> getOverrideHierarchy(final Method method, final ClassUtil.Interfaces interfacesBehavior) {
         Validate.notNull(method);
         final Set<Method> result = new LinkedHashSet<Method>();
         result.add(method);
@@ -783,7 +783,7 @@ public class MethodUtils {
 
         final Class<?> declaringClass = method.getDeclaringClass();
 
-        final Iterator<Class<?>> hierarchy = ClassUtils.hierarchy(declaringClass, interfacesBehavior).iterator();
+        final Iterator<Class<?>> hierarchy = ClassUtil.hierarchy(declaringClass, interfacesBehavior).iterator();
         //skip the declaring class :P
         hierarchy.next();
         hierarchyTraversal:
@@ -799,11 +799,11 @@ public class MethodUtils {
                 continue;
             }
             // necessary to get arguments every time in the case that we are including interfaces
-            final Map<TypeVariable<?>, Type> typeArguments = TypeUtils.getTypeArguments(declaringClass, m.getDeclaringClass());
+            final Map<TypeVariable<?>, Type> typeArguments = TypeUtil.getTypeArguments(declaringClass, m.getDeclaringClass());
             for (int i = 0; i < parameterTypes.length; i++) {
-                final Type childType = TypeUtils.unrollVariables(typeArguments, method.getGenericParameterTypes()[i]);
-                final Type parentType = TypeUtils.unrollVariables(typeArguments, m.getGenericParameterTypes()[i]);
-                if (!TypeUtils.equals(childType, parentType)) {
+                final Type childType = TypeUtil.unrollVariables(typeArguments, method.getGenericParameterTypes()[i]);
+                final Type parentType = TypeUtil.unrollVariables(typeArguments, m.getGenericParameterTypes()[i]);
+                if (!TypeUtil.equals(childType, parentType)) {
                     continue hierarchyTraversal;
                 }
             }
@@ -887,8 +887,8 @@ public class MethodUtils {
     }
 
     /**
-     * <p>Gets a combination of {@link ClassUtils#getAllSuperclasses}(Class)} and
-     * {@link ClassUtils#getAllInterfaces(Class)}, one from superclasses, one
+     * <p>Gets a combination of {@link ClassUtil#getAllSuperclasses}(Class)} and
+     * {@link ClassUtil#getAllInterfaces(Class)}, one from superclasses, one
      * from interfaces, and so on in a breadth first way.</p>
      *
      * @param cls the class to look up, may be {@code null}
@@ -902,9 +902,9 @@ public class MethodUtils {
         }
 
         final List<Class<?>> allSuperClassesAndInterfaces = new ArrayList<>();
-        final List<Class<?>> allSuperclasses = ClassUtils.getAllSuperclasses(cls);
+        final List<Class<?>> allSuperclasses = ClassUtil.getAllSuperclasses(cls);
         int superClassIndex = 0;
-        final List<Class<?>> allInterfaces = ClassUtils.getAllInterfaces(cls);
+        final List<Class<?>> allInterfaces = ClassUtil.getAllInterfaces(cls);
         int interfaceIndex = 0;
         while (interfaceIndex < allInterfaces.size() ||
                 superClassIndex < allSuperclasses.size()) {
@@ -948,7 +948,7 @@ public class MethodUtils {
 
         Validate.isTrue(method != null, "The method must not be null");
         Validate.isTrue(annotationCls != null, "The annotation class must not be null");
-        if (!ignoreAccess && !MemberUtils.isAccessible(method)) {
+        if (!ignoreAccess && !MemberUtil.isAccessible(method)) {
             return null;
         }
 

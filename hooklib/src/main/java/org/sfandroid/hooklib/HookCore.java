@@ -20,6 +20,7 @@ import android.util.Log;
 import android.util.Pair;
 
 import org.sfandroid.hooklib.annotation.HookClass;
+import org.sfandroid.hooklib.annotation.HookEnable;
 import org.sfandroid.hooklib.annotation.HookFieldConfigure;
 import org.sfandroid.hooklib.annotation.HookImplicit;
 import org.sfandroid.hooklib.annotation.HookMethod;
@@ -40,11 +41,11 @@ import org.sfandroid.hooklib.enums.HookProcessType;
 import org.sfandroid.hooklib.interfaces.IDHook;
 import org.sfandroid.hooklib.interfaces.IHookError;
 import org.sfandroid.hooklib.interfaces.IHookFrame;
-import org.sfandroid.hooklib.utils.ArrayUtils;
-import org.sfandroid.hooklib.utils.ClassUtils;
-import org.sfandroid.hooklib.utils.MethodFindUtils;
-import org.sfandroid.hooklib.utils.ObjectUtils;
-import org.sfandroid.hooklib.utils.StringUtils;
+import org.sfandroid.hooklib.utils.ArrayUtil;
+import org.sfandroid.hooklib.utils.ClassUtil;
+import org.sfandroid.hooklib.utils.MethodFindUtil;
+import org.sfandroid.hooklib.utils.ObjectUtil;
+import org.sfandroid.hooklib.utils.StringUtil;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Constructor;
@@ -66,7 +67,6 @@ import java.util.Map;
  * @author beichen
  */
 final class HookCore {
-    private static final String CONSTRUCTOR_NAME = "<init>";
     private static final String TAG = "HookCore";
 
     private static IHookFrame hook;
@@ -156,7 +156,7 @@ final class HookCore {
                             wrapCallback.before.invoke(wrapCallback.beforeObj, wrapCallback.beforeHookWarp ? param : param.real);
                             break;
                         case THIS_AND_PARAM:
-                            wrapCallback.before.invoke(wrapCallback.beforeObj, ArrayUtils.add(param.args, 0, param.thisObject));
+                            wrapCallback.before.invoke(wrapCallback.beforeObj, ArrayUtil.add(param.args, 0, param.thisObject));
                             break;
                         case HOOK_WRAP_THIS_AND_PARAM:
                             Object[] ps = new Object[param.args.length + 2];
@@ -169,7 +169,7 @@ final class HookCore {
                             wrapCallback.before.invoke(wrapCallback.beforeObj, param.args);
                             break;
                         case HOOK_WRAP_AND_PARAM:
-                            wrapCallback.before.invoke(wrapCallback.beforeObj, ArrayUtils.add(param.args, 0, wrapCallback.beforeHookWarp ? param : param.real));
+                            wrapCallback.before.invoke(wrapCallback.beforeObj, ArrayUtil.add(param.args, 0, wrapCallback.beforeHookWarp ? param : param.real));
                             break;
                         case ONLY_THIS:
                             wrapCallback.before.invoke(wrapCallback.beforeObj, param.thisObject);
@@ -203,7 +203,7 @@ final class HookCore {
                             wrapCallback.after.invoke(wrapCallback.afterObj, wrapCallback.afterHookWarp ? param : param.real);
                             break;
                         case THIS_AND_PARAM:
-                            wrapCallback.after.invoke(wrapCallback.afterObj, ArrayUtils.add(param.args, 0, param.thisObject));
+                            wrapCallback.after.invoke(wrapCallback.afterObj, ArrayUtil.add(param.args, 0, param.thisObject));
                             break;
                         case HOOK_WRAP_THIS_AND_PARAM:
                             Object[] ps = new Object[param.args.length + 2];
@@ -216,7 +216,7 @@ final class HookCore {
                             wrapCallback.after.invoke(wrapCallback.afterObj, param.args);
                             break;
                         case HOOK_WRAP_AND_PARAM:
-                            wrapCallback.after.invoke(wrapCallback.afterObj, ArrayUtils.add(param.args, 0, wrapCallback.afterHookWarp ? param : param.real));
+                            wrapCallback.after.invoke(wrapCallback.afterObj, ArrayUtil.add(param.args, 0, wrapCallback.afterHookWarp ? param : param.real));
                             break;
                         case ONLY_THIS:
                             wrapCallback.after.invoke(wrapCallback.afterObj, param.thisObject);
@@ -283,26 +283,25 @@ final class HookCore {
             return;
         }
         HookClass cClass = listen.getClass().getAnnotation(HookClass.class);
-        List<Method> methods = MethodFindUtils.getMethodsWithAnnotation(listen.getClass(), HookMethod.class, true);
-        methods.addAll(MethodFindUtils.getMethodsWithAnnotation(listen.getClass(), HookMethods.class, true));
+        String classConfName = cClass != null ? cClass.value() : StringUtil.EMPTY;
+        Class<?> classConfClass = cClass != null ? !ObjectUtil.isNullClass(cClass.clazz()) ? cClass.clazz() : null : null;
+        List<Method> methods = MethodFindUtil.getMethodsWithAnnotation(listen.getClass(), HookMethod.class, true);
+        methods.addAll(MethodFindUtil.getMethodsWithAnnotation(listen.getClass(), HookMethods.class, true));
         for (Method method : methods) {
             HookMethod[] hms = method.getAnnotation(HookMethod.class) == null ? method.getAnnotation(HookMethods.class).value() : new HookMethod[]{method.getAnnotation(HookMethod.class)};
             for (HookMethod hm : hms) {
-                HookClass hc = hm.cls();
                 // 方法上没有配置Hook类则从类上继承
-                if (StringUtils.isEmpty(hc.value()) && ObjectUtils.isNullClass(hc.cls())) {
-                    hc = cClass;
-                }
-                if (hc == null) {
-                    errorHandler.error(method + " method did not find " + HookClass.class.getSimpleName() + " annotation and could not inherit from the class " + listen.getClass().getSimpleName());
+                String name = StringUtil.isNoneEmpty(hm.className()) ? hm.className() : classConfName;
+                Class<?> clazz = !ObjectUtil.isNullClass(hm.clazz()) ? hm.clazz() : classConfClass;
+                boolean strEmpty = StringUtil.isEmpty(name);
+                if (strEmpty && clazz == null) {
+                    errorHandler.error("The(" + method + ") method annotation(" + ClassUtil.getName(HookMethod.class) +
+                            ") does not have correct class name," +
+                            "and the class(" + ClassUtil.getName(listen) + ") has no annotation(" + ClassUtil.getName(HookClass.class) +
+                            ") or the correct class name is not configured.");
                     continue;
                 }
-                boolean strEmpty = StringUtils.isEmpty(hc.value());
-                if (strEmpty && ObjectUtils.isNullClass(hc.cls())) {
-                    errorHandler.error(method + " method configuration " + HookClass.class.getSimpleName() + " annotation are not configured with the correct class " + listen.getClass().getSimpleName());
-                    continue;
-                }
-                HookCore core = strEmpty ? getInstance(hc.cls()) : getInstance(hc.value());
+                HookCore core = !strEmpty ? getInstance(name) : getInstance(clazz);
                 // 获取该对象上所有绑定的静态配置方法
                 List<WrapStaticMethod> list = core.staticBinds.get(listen);
                 if (list == null) {
@@ -334,7 +333,7 @@ final class HookCore {
      */
     private static void addDHook(IDHook listen) {
         DHookClass[] dc = listen.getHooks();
-        if (ArrayUtils.isEmpty(dc)) {
+        if (ArrayUtil.isEmpty(dc)) {
             errorHandler.error(listen.getClass().getSimpleName() + " object dynamic configuration hook item cannot be empty");
             return;
         }
@@ -342,24 +341,24 @@ final class HookCore {
         if (ci != null) {
             // 修复动态配置为空时从类上获取注解
             for (DHookClass d : dc) {
-                if (StringUtils.isEmpty(d.name) && ObjectUtils.isNullClass(d.type)) {
-                    if (!StringUtils.isEmpty(ci.value())) {
+                if (StringUtil.isEmpty(d.name) && ObjectUtil.isNullClass(d.type)) {
+                    if (!StringUtil.isEmpty(ci.value())) {
                         d.name = ci.value();
                     }
-                    if (!ObjectUtils.isNullClass(ci.cls())) {
-                        d.type = ci.cls();
+                    if (!ObjectUtil.isNullClass(ci.clazz())) {
+                        d.type = ci.clazz();
                     }
                 }
             }
         }
         for (int i = 0; i < dc.length; i++) {
-            boolean b1 = StringUtils.isEmpty(dc[i].name);
-            boolean b2 = ObjectUtils.isNullClass(dc[i].type);
+            boolean b1 = StringUtil.isEmpty(dc[i].name);
+            boolean b2 = ObjectUtil.isNullClass(dc[i].type);
             if (b1 && b2) {
                 errorHandler.error(listen.getClass().getSimpleName() + " object dynamic configuration items " + i + " contain empty classes");
                 continue;
             }
-            if (ArrayUtils.isEmpty(dc[i].methods)) {
+            if (ArrayUtil.isEmpty(dc[i].methods)) {
                 errorHandler.error(listen.getClass().getSimpleName() + " object dynamic configuration items " + i + " contain empty method");
                 continue;
             }
@@ -471,11 +470,11 @@ final class HookCore {
         hook = frame;
     }
 
-    private static DHookProcess findProcess(DHookProcess dynamicMethod, HookProcess callbackMethod,
+    private static DHookProcess findProcess(DHookProcess dynamicMethod, DHookProcess callbackMethod,
                                             DHookProcess dynamicClass, HookProcess callbackClass) {
         // 配置顺序优先级
         // 动态配置方法 > 静态配置方法 > 动态配置类 > 静态配置类
-        DHookProcess[] processes = new DHookProcess[]{dynamicMethod, callbackMethod == null ? null : DHookProcess.toDProcess(callbackClass), dynamicClass, DHookProcess.toDProcess(callbackClass)};
+        DHookProcess[] processes = new DHookProcess[]{dynamicMethod, callbackMethod, dynamicClass, DHookProcess.toDProcess(callbackClass)};
         for (DHookProcess process : processes) {
             if (process != null && process.hookProcessType != HookProcessType.INHERIT) {
                 return process;
@@ -484,11 +483,11 @@ final class HookCore {
         return DHookProcess.DEFAULT;
     }
 
-    private static DHookVersion findVersion(DHookVersion dynamicMethod, HookVersion callbackMethod,
+    private static DHookVersion findVersion(DHookVersion dynamicMethod, DHookVersion callbackMethod,
                                             DHookVersion dynamicClass, HookVersion callbackClass) {
         // 配置顺序优先级
         // 动态配置方法 > 静态配置方法 > 动态配置类 > 静态配置类
-        DHookVersion[] arr = new DHookVersion[]{dynamicMethod, callbackMethod == null ? null : DHookVersion.toDVersion(callbackMethod), dynamicClass, DHookVersion.toDVersion(callbackClass)};
+        DHookVersion[] arr = new DHookVersion[]{dynamicMethod, callbackMethod, dynamicClass, DHookVersion.toDVersion(callbackClass)};
         for (DHookVersion version : arr) {
             if (version != null && !version.inherit()) {
                 return version;
@@ -511,7 +510,7 @@ final class HookCore {
     private static Method findBindMethod(List<Method> methods, int id) {
         for (Method method : methods) {
             HookMethodConfigure conf = method.getAnnotation(HookMethodConfigure.class);
-            if (ArrayUtils.contains(conf.bind(), id)) {
+            if (ArrayUtil.contains(conf.bind(), id)) {
                 return method;
             }
         }
@@ -523,17 +522,17 @@ final class HookCore {
         if (version == null || version == DHookVersion.DEFAULT) {
             return true;
         }
-        if (!ArrayUtils.isEmpty(version.values)) {
-            return ArrayUtils.contains(version.values, curVersion);
+        if (!ArrayUtil.isEmpty(version.values)) {
+            return ArrayUtil.contains(version.values, curVersion);
         }
         if (version.max < version.min) {
-            throw new IllegalArgumentException("At" + obj.getClass().getName() + " class " + method +
-                    " version configure error, max version " + version.max + " < min version " + version.min);
+            throw new IllegalArgumentException("Wrong configuration version number on class(" + ClassUtil.getName(obj) + ") method(" + method + ")" +
+                    ", max version " + version.max + " < min version " + version.min);
         }
         if (version.min < 0) {
-            throw new IllegalArgumentException("At" + obj.getClass().getName() + " class " + method + " version configure error, min version " + version.min + " must more than 0");
+            throw new IllegalArgumentException("Wrong configuration version number on class(" + ClassUtil.getName(obj) + ") method(" + method + "), min version " + version.min + " must more than 0.");
         }
-        if (version.min == 0) {
+        if (version.min == 0 && version.max == 0) {
             // 都为0,且指定版本号为null,则默认是全版本支持
             return true;
         }
@@ -547,19 +546,19 @@ final class HookCore {
 
     private static String toMethodString(Class returnType, String returnName, Class[] types, String[] params) {
         StringBuilder sb = new StringBuilder();
-        if (!StringUtils.isEmpty(returnName)) {
+        if (!StringUtil.isEmpty(returnName)) {
             sb.append(returnName);
         } else if (returnType != null) {
-            sb.append(ClassUtils.isPrimitive(returnType) ? ClassUtils.getPrimitiveName(returnType) : returnType.getName());
+            sb.append(ClassUtil.isPrimitive(returnType) ? ClassUtil.getPrimitiveName(returnType) : returnType.getName());
         } else {
             sb.append("void");
         }
         sb.append(' ');
-        if (!ArrayUtils.isEmpty(params)) {
-            String s = ArrayUtils.toString(params);
+        if (!ArrayUtil.isEmpty(params)) {
+            String s = ArrayUtil.toString(params);
             sb.append("(").append(s.substring(1, s.length() - 1)).append(")");
-        } else if (!ArrayUtils.isEmpty(types)) {
-            String s = ArrayUtils.toString(params);
+        } else if (!ArrayUtil.isEmpty(types)) {
+            String s = ArrayUtil.toString(params);
             sb.append("(").append(s.substring(1, s.length() - 1)).append(")");
         } else {
             sb.append("()");
@@ -589,10 +588,10 @@ final class HookCore {
                     break;
                 }
             case SPECIAL:
-                if (ArrayUtils.isEmpty(processes)) {
+                if (ArrayUtil.isEmpty(processes)) {
                     break;
                 }
-                if (ArrayUtils.contains(processes, processName)) {
+                if (ArrayUtil.contains(processes, processName)) {
                     ret = true;
                 }
                 break;
@@ -626,7 +625,7 @@ final class HookCore {
 
     private void init(ClassLoader loader) throws ClassNotFoundException {
         if (that == null) {
-            that = ClassUtils.getClass(loader, className, false);
+            that = ClassUtil.getClass(loader, className, false);
         }
         for (Map.Entry<IHook, List<WrapStaticMethod>> entry : staticBinds.entrySet()) {
             IHook obj = entry.getKey();
@@ -647,9 +646,12 @@ final class HookCore {
         boolean mImplicit = item.method.getAnnotation(HookImplicit.class) != null && item.method.getAnnotation(HookImplicit.class).value();
         for (HookMethod hm : item.items) {
             // 第一步判断Hook条件是否成立
-            resolve(obj, loader, item.method, hm.hook(), DHookParameter.toDParameter(hm.param()),
-                    findProcess(null, hm.process(), null, cProcess),
-                    findVersion(null, hm.version(), null, cVersion),
+            if (!hm.enable() || !findEnable(obj, item.method)) {
+                continue;
+            }
+            resolve(obj, loader, item.method, hm.value(), hm.hook(), DHookParameter.toDParameter(hm.param()),
+                    findProcess(null, DHookProcess.create(hm.processType(), hm.processes()), null, cProcess),
+                    findVersion(null, DHookVersion.create(hm.versions(), hm.min(), hm.max()), null, cVersion),
                     mImplicit || hm.implicit());
             if (!mul) {
                 return;
@@ -660,7 +662,7 @@ final class HookCore {
     private void dynamicResolve(IDHook obj, DHookClass conf, ClassLoader loader) {
         HookProcess cProcess = obj.getClass().getAnnotation(HookProcess.class);
         HookVersion cVersion = obj.getClass().getAnnotation(HookVersion.class);
-        List<Method> callbacks = MethodFindUtils.getMethodsWithAnnotation(obj.getClass(), HookMethodConfigure.class, true);
+        List<Method> callbacks = MethodFindUtil.getMethodsWithAnnotation(obj.getClass(), HookMethodConfigure.class, true);
         // 动态解析不能存在隐式推断
         for (DHookMethod dm : conf.methods) {
             // 第一步查找绑定的方法
@@ -668,20 +670,38 @@ final class HookCore {
             if (callback == null) {
                 continue;
             }
+            if (!findEnable(obj, callback)) {
+                continue;
+            }
             boolean implicit = callback.getAnnotation(HookImplicit.class) != null && callback.getAnnotation(HookImplicit.class).value();
-            resolve(obj, loader, callback, callback.getAnnotation(HookMethodConfigure.class),
+            resolve(obj, loader, callback, null, callback.getAnnotation(HookMethodConfigure.class),
                     findParameter(dm.param, callback.getAnnotation(HookParameter.class)),
-                    findProcess(dm.process, callback.getAnnotation(HookProcess.class), conf.process, cProcess),
-                    findVersion(dm.version, callback.getAnnotation(HookVersion.class), conf.version, cVersion),
+                    findProcess(dm.process, DHookProcess.toDProcess(callback.getAnnotation(HookProcess.class)),
+                            conf.process, cProcess),
+                    findVersion(dm.version, DHookVersion.toDVersion(callback.getAnnotation(HookVersion.class)),
+                            conf.version, cVersion),
                     implicit);
         }
     }
 
-    private void resolve(IHook obj, ClassLoader loader, Method callback, HookMethodConfigure methodConf, DHookParameter parameter, DHookProcess process, DHookVersion version, boolean implicit) {
-        // 第一步判断进程名和版本
-        if (!methodConf.value()) {
-            return;
+    private boolean findEnable(IHook obj, Method callback) {
+        if (callback != null && callback.getAnnotation(HookEnable.class) != null) {
+            return callback.getAnnotation(HookEnable.class).value();
         }
+        // 方法上没有则从类上获取
+        if (obj != null) {
+            HookEnable enable = obj.getClass().getAnnotation(HookEnable.class);
+            if (enable != null) {
+                return enable.value();
+            }
+        }
+        // 都没有则默认是开启的
+        return true;
+    }
+
+    private void resolve(IHook obj, ClassLoader loader, Method callback, String name, HookMethodConfigure methodConf,
+                         DHookParameter parameter, DHookProcess process, DHookVersion version, boolean implicit) {
+        // 第一步判断进程名和版本
         if (process != null && !atHookProcess(process.hookProcessType, process.processes)) {
             return;
         }
@@ -689,34 +709,33 @@ final class HookCore {
             return;
         }
         // 第二步确定方法名
-        Pair<String, Integer> pair = getMethodName(methodConf, callback);
-        String name = pair.first;
+        Pair<String, Integer> pair = getMethodName(name, methodConf, callback);
+        name = pair.first;
         int type = pair.second;
-        boolean isConstructor = StringUtils.equals(name, CONSTRUCTOR_NAME);
-        // 方法查找只能在方法名为null或者构造函数时才能开启
-        if ((!StringUtils.isEmpty(name) && !isConstructor) && (methodConf.find() || methodConf.findAll())) {
-            errorHandler.error("Class: " + obj.getClass().getSimpleName() + " method: " + callback + " configuration error,Method lookup can only be started when the method name is empty or " + CONSTRUCTOR_NAME);
+        boolean isConstructor = StringUtil.equals(name, HookEntry.CONSTRUCTOR_NAME);
+        // 方法查找只能在方法名为空或者构造函数时才能开启
+        if ((!StringUtil.isEmpty(name) && !isConstructor) && (methodConf.find() || methodConf.findAll())) {
+            errorHandler.error("Current class(" + ClassUtil.getName(obj) + ")  callback method(" + callback + ") configuration error," +
+                    "the method search can only be turned on when the method name is empty or the method name is '<init>'");
             return;
         }
         // 第三步确定方法签名
         Class<?>[] pTypes;
         Class<?>[] eTypes;
         Class<?> rType;
-        Class<?>[] guessTypes = null;
         HookFieldConfigure[] guessConfigures = null;
         HookCallbackType guessCallbackType = null;
         try {
-            rType = ClassUtils.getClass(loader, parameter.rName, parameter.rType, false);
+            rType = ClassUtil.getClass(loader, parameter.rName, parameter.rType, false);
             if (implicit) {
                 Object[] os = guessMethodType(callback, loader);
-                guessTypes = (Class<?>[]) os[0];
+                pTypes = (Class<?>[]) os[0];
                 guessConfigures = (HookFieldConfigure[]) os[1];
                 guessCallbackType = (HookCallbackType) os[2];
-                pTypes = guessTypes;
             } else {
-                pTypes = ClassUtils.getClass(loader, parameter.pNames, parameter.pTypes, false);
+                pTypes = ClassUtil.getClass(loader, parameter.pNames, parameter.pTypes, false);
             }
-            eTypes = ClassUtils.getClass(loader, parameter.tNames, parameter.tTypes, false);
+            eTypes = ClassUtil.getClass(loader, parameter.tNames, parameter.tTypes, false);
         } catch (ClassNotFoundException e) {
             errorHandler.error(that.getName() + " class find method error", e);
             return;
@@ -733,55 +752,57 @@ final class HookCore {
         wrapHook(matchMembers, callback, obj, before, guessCallbackType);
     }
 
-    private Pair<String, Integer> getMethodName(HookMethodConfigure hook, Method method) {
-        String name = hook.name();
+    private Pair<String, Integer> getMethodName(String name, HookMethodConfigure hook, Method method) {
+        String result = StringUtil.isEmpty(hook.value()) ? name : hook.value();
         int type = -1;
-        if (StringUtils.isEmpty(name) && !hook.find() && !hook.findAll()) {
+        if (StringUtil.isEmpty(result) && !hook.find() && !hook.findAll()) {
             // 根据方法名来推断
-            name = method.getName();
+            result = method.getName();
             type = 0;
-            if (name.endsWith("Before")) {
-                name = name.substring(0, name.length() - 6);
-            } else if (name.endsWith("After")) {
-                name = name.substring(0, name.length() - 5);
+            if (result.endsWith("Before")) {
+                result = result.substring(0, result.length() - 6);
+            } else if (result.endsWith("After")) {
+                result = result.substring(0, result.length() - 5);
                 type = 1;
             }
         }
-        return new Pair<>(name, type);
+        return new Pair<>(result, type);
     }
 
     private Member[] matchMethod(String name, HookMethodConfigure hook, Class<?> rType, Class<?>[] pTypes, HookFieldConfigure[] pFields,
                                  Class<?>[] eTypes, boolean autoBoxing, HookCompatibleType compatible) throws IllegalArgumentException {
         List<Member> matchMembers = new ArrayList<>();
-        boolean isConstructor = StringUtils.equals(name, CONSTRUCTOR_NAME);
+        boolean isConstructor = StringUtil.equals(name, HookEntry.CONSTRUCTOR_NAME);
         if (hook.find()) {
             Member find;
-            find = isConstructor ? MethodFindUtils.findConstructor(that, pTypes, pFields, autoBoxing, compatible) :
-                    MethodFindUtils.findMethodByParameterReturnTypeAndException(that, rType, pTypes, pFields, eTypes, hook.findSuper(), autoBoxing, compatible);
+            find = isConstructor ? MethodFindUtil.findConstructor(that, pTypes, pFields, autoBoxing, compatible) :
+                    MethodFindUtil.findMethodByParameterReturnTypeAndException(that, rType, pTypes, pFields, eTypes, hook.findSuper(), autoBoxing, compatible);
             if (find == null) {
                 throw new IllegalArgumentException(that.getName() + "find: class not found special function sign");
             }
             matchMembers.add(find);
         } else if (hook.findAll()) {
             Member[] finds;
-            finds = isConstructor ? MethodFindUtils.findConstructors(that, pTypes, pFields, autoBoxing, compatible) :
-                    MethodFindUtils.findMethodsByParameterReturnTypeAndException(that, rType, pTypes, pFields, eTypes, hook.findSuper(), autoBoxing, compatible);
-            if (ArrayUtils.isEmpty(finds)) {
+            finds = isConstructor ? MethodFindUtil.findConstructors(that, pTypes, pFields, autoBoxing, compatible) :
+                    MethodFindUtil.findMethodsByParameterReturnTypeAndException(that, rType, pTypes, pFields, eTypes, hook.findSuper(), autoBoxing, compatible);
+            if (ArrayUtil.isEmpty(finds)) {
                 throw new IllegalArgumentException(that.getName() + "findAll: class not found " +
                         "special functions sign");
             }
             matchMembers.addAll(Arrays.asList(finds));
         } else if (hook.all()) {
-            Member[] finds = isConstructor ? MethodFindUtils.findAllConstructor(that) : MethodFindUtils.findAllMethod(that, name, hook.findSuper());
-            if (ArrayUtils.isEmpty(finds)) {
+            Member[] finds = isConstructor ? MethodFindUtil.findAllConstructor(that) : MethodFindUtil.findAllMethod(that, name, hook.findSuper());
+            if (ArrayUtil.isEmpty(finds)) {
                 throw new IllegalArgumentException(that.getName() + "all: class not found special method name: " + name);
             }
             matchMembers.addAll(Arrays.asList(finds));
         } else {
-            Member find = isConstructor ? MethodFindUtils.findConstructor(that, pTypes, pFields, autoBoxing, compatible) :
-                    MethodFindUtils.findMethod(that, name, rType, pTypes, pFields, eTypes, hook.findSuper(), autoBoxing, compatible);
+            Member find = isConstructor ? MethodFindUtil.findConstructor(that, pTypes, pFields, autoBoxing, compatible) :
+                    MethodFindUtil.findMethod(that, name, rType, pTypes, pFields, eTypes, hook.findSuper(), autoBoxing, compatible);
             if (find == null) {
-                throw new IllegalArgumentException("special: class(" + that + ")  not found special method: " + name);
+                throw new IllegalArgumentException("special: class(" + that + ")  not found special method: " + name +
+                        " construction: " + isConstructor +
+                        " parameter type: " + ArrayUtil.toString(pTypes));
             }
             matchMembers.add(find);
         }
@@ -945,7 +966,7 @@ final class HookCore {
         Class<?>[] callbackParamsType = method.getParameterTypes();
         // 没有参数则认为只包含参数
         if (callbackParamsType.length == 0) {
-            return new Object[]{ArrayUtils.EMPTY_CLASS_ARRAY, ArrayUtils.EMPTY_OBJECT_ARRAY, HookCallbackType.ONLY_PARAM};
+            return new Object[]{ArrayUtil.EMPTY_CLASS_ARRAY, new HookFieldConfigure[0], HookCallbackType.ONLY_PARAM};
         }
         List<Class<?>> hookParamsType = new ArrayList<>();
         List<HookFieldConfigure> hookParamsConf = new ArrayList<>();
@@ -968,8 +989,8 @@ final class HookCore {
                 continue;
             }
             HookFieldConfigure mField = getSpecialAnnotation(pas[i], HookFieldConfigure.class);
-            Class<?> paramType = mField == null || StringUtils.isEmpty(mField.value()) ?
-                    callbackParamsType[i] : ClassUtils.getClass(loader, mField.value(), false);
+            Class<?> paramType = mField == null || StringUtil.isEmpty(mField.value()) ?
+                    callbackParamsType[i] : ClassUtil.getClass(loader, mField.value(), false);
             hookParamsType.add(paramType);
             hookParamsConf.add(mField);
         }

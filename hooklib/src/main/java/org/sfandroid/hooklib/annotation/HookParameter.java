@@ -17,7 +17,8 @@
 package org.sfandroid.hooklib.annotation;
 
 import org.sfandroid.hooklib.enums.HookCompatibleType;
-import org.sfandroid.hooklib.utils.ObjectUtils;
+import org.sfandroid.hooklib.utils.ObjectUtil;
+import org.sfandroid.hooklib.utils.StringUtil;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -42,11 +43,11 @@ public @interface HookParameter {
     String[] names() default {};
 
     /**
-     * 方法参数对应的类集合 默认{@link ObjectUtils.Null}是为了区分无参方法
+     * 方法参数对应的类集合 默认{@link ObjectUtil.Null}是为了区分无参方法
      *
      * @return 方法的参数类
      */
-    Class[] params() default {ObjectUtils.Null.class};
+    Class[] params() default {ObjectUtil.Null.class};
 
     /**
      * {当返回值为void时应该设置为{@link Void#TYPE}
@@ -54,14 +55,14 @@ public @interface HookParameter {
      *
      * @return 方法返回值的类型
      */
-    Class<?> returnType() default ObjectUtils.Null.class;
+    Class<?> returnType() default ObjectUtil.Null.class;
 
     /**
      * 值为空时忽略返回值类型查找
      *
      * @return 返回值的类名
      */
-    String returnName() default "";
+    String returnName() default StringUtil.EMPTY;
 
     /**
      * 方法查找时起作用,为空则忽略异常查找
@@ -76,7 +77,7 @@ public @interface HookParameter {
      *
      * @return 方法抛出的所有异常类型
      */
-    Class[] exceptionTypes() default {ObjectUtils.Null.class};
+    Class[] exceptionTypes() default {ObjectUtil.Null.class};
 
     /**
      * 在匹配方法签名时是否可以自动装箱,基本类型与包装类型匹配

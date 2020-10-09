@@ -26,14 +26,13 @@ import com.beichen.hooklib.test.StaticHookClassTest;
 import org.sfandroid.hooklib.annotation.HookFieldConfigure;
 import org.sfandroid.hooklib.annotation.HookMethod;
 import org.sfandroid.hooklib.annotation.HookMethods;
-import org.sfandroid.hooklib.annotation.HookVersion;
 
 import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity {
 
-    @HookMethod(version = @HookVersion(10025))
-    @HookMethod(version = @HookVersion(10026))
+    @HookMethod(versions = 10025)
+    @HookMethod(versions = 10026)
     @Override
     protected void onCreate(@HookFieldConfigure("123") Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

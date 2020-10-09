@@ -39,7 +39,7 @@ import java.util.Map;
 import java.util.Set;
 
 
-@HookClass(cls = Activity.class)
+@HookClass(clazz = Activity.class)
 final class BaseActivityHook implements IHook, IActivity, IHookCollect<IActivity> {
     private static final String TAG = "ActivityListener ";
     private static boolean log = HookEntry.debug;
@@ -317,7 +317,7 @@ final class BaseActivityHook implements IHook, IActivity, IHookCollect<IActivity
         }
     }
 
-    @HookMethod(hook = @HookMethodConfigure(name = "onCreate"), param = @HookParameter(params = Bundle.class))
+    @HookMethod(hook = @HookMethodConfigure(value = "onCreate"), param = @HookParameter(params = Bundle.class))
     @Override
     public void onCreateBefore(XC_MethodHook.MethodHookParam param) throws Throwable {
         String name = param.thisObject.getClass().getName();
@@ -333,7 +333,7 @@ final class BaseActivityHook implements IHook, IActivity, IHookCollect<IActivity
         }
     }
 
-    @HookMethod(hook = @HookMethodConfigure(name = "onCreate", before = false), param = @HookParameter(params = Bundle.class))
+    @HookMethod(hook = @HookMethodConfigure(value = "onCreate", before = false), param = @HookParameter(params = Bundle.class))
     @Override
     public void onCreateAfter(XC_MethodHook.MethodHookParam param) throws Throwable {
         String name = param.thisObject.getClass().getName();

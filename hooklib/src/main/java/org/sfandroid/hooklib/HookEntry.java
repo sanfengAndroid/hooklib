@@ -36,6 +36,7 @@ public final class HookEntry {
     public static final String DEFAULT_GROUP = "default";
     public static boolean debug = BuildConfig.DEBUG;
     private static HookEntry singleton = null;
+    public static final String CONSTRUCTOR_NAME = "<init>";
     /**
      * 分组保存所有Hook项的映射表
      */

@@ -17,8 +17,8 @@
 package org.sfandroid.hooklib.reflect;
 
 
-import org.sfandroid.hooklib.utils.ClassUtils;
-import org.sfandroid.hooklib.utils.StringUtils;
+import org.sfandroid.hooklib.utils.ClassUtil;
+import org.sfandroid.hooklib.utils.StringUtil;
 import org.sfandroid.hooklib.utils.Validate;
 
 import java.lang.annotation.Annotation;
@@ -36,15 +36,15 @@ import java.util.List;
  *
  * @since 2.5
  */
-public class FieldUtils {
+public class FieldUtil {
 
     /**
-     * {@link FieldUtils} instances should NOT be constructed in standard programming.
+     * {@link FieldUtil} instances should NOT be constructed in standard programming.
      * <p>
      * This constructor is {@code public} to permit tools that require a JavaBean instance to operate.
      * </p>
      */
-    public FieldUtils() {
+    public FieldUtil() {
         super();
     }
 
@@ -58,7 +58,7 @@ public class FieldUtils {
      */
     public static Field getField(final Class<?> cls, final String fieldName) {
         final Field field = getField(cls, fieldName, false);
-        MemberUtils.setAccessibleWorkaround(field);
+        MemberUtil.setAccessibleWorkaround(field);
         return field;
     }
 
@@ -77,7 +77,7 @@ public class FieldUtils {
      */
     public static Field getField(final Class<?> cls, final String fieldName, final boolean forceAccess) {
         Validate.isTrue(cls != null, "The class must not be null");
-        Validate.isTrue(StringUtils.isNotBlank(fieldName), "The field name must not be blank/empty");
+        Validate.isTrue(StringUtil.isNotBlank(fieldName), "The field name must not be blank/empty");
         // FIXME is this workaround still needed? lang requires Java 6
         // Sun Java 1.3 has a bugged implementation of getField hence we write the
         // code ourselves
@@ -114,7 +114,7 @@ public class FieldUtils {
         // incase there is a public supersuperclass field hidden by a private/package
         // superclass field.
         Field match = null;
-        for (final Class<?> class1 : ClassUtils.getAllInterfaces(cls)) {
+        for (final Class<?> class1 : ClassUtil.getAllInterfaces(cls)) {
             try {
                 final Field test = class1.getField(fieldName);
                 Validate.isTrue(match == null, "Reference to field %s is ambiguous relative to %s"
@@ -153,11 +153,11 @@ public class FieldUtils {
      */
     public static Field getDeclaredField(final Class<?> cls, final String fieldName, final boolean forceAccess) {
         Validate.isTrue(cls != null, "The class must not be null");
-        Validate.isTrue(StringUtils.isNotBlank(fieldName), "The field name must not be blank/empty");
+        Validate.isTrue(StringUtil.isNotBlank(fieldName), "The field name must not be blank/empty");
         try {
             // only consider the specified class by using getDeclaredField()
             final Field field = cls.getDeclaredField(fieldName);
-            if (!MemberUtils.isAccessible(field)) {
+            if (!MemberUtil.isAccessible(field)) {
                 if (forceAccess) {
                     field.setAccessible(true);
                 } else {
@@ -367,7 +367,7 @@ public class FieldUtils {
         if (forceAccess && !field.isAccessible()) {
             field.setAccessible(true);
         } else {
-            MemberUtils.setAccessibleWorkaround(field);
+            MemberUtil.setAccessibleWorkaround(field);
         }
         return field.get(target);
     }
@@ -570,7 +570,7 @@ public class FieldUtils {
         if (forceAccess && !field.isAccessible()) {
             field.setAccessible(true);
         } else {
-            MemberUtils.setAccessibleWorkaround(field);
+            MemberUtil.setAccessibleWorkaround(field);
         }
         field.set(target, value);
     }
@@ -598,27 +598,30 @@ public class FieldUtils {
      */
     public static void removeFinalModifier(final Field field, final boolean forceAccess) {
         Validate.isTrue(field != null, "The field must not be null");
-
-        try {
-            if (Modifier.isFinal(field.getModifiers())) {
-                // Do all JREs implement Field with a private ivar called "modifiers"?
-                final Field modifiersField = Field.class.getDeclaredField("modifiers");
-                final boolean doForceAccess = forceAccess && !modifiersField.isAccessible();
-                if (doForceAccess) {
-                    modifiersField.setAccessible(true);
-                }
-                try {
-                    modifiersField.setInt(field, field.getModifiers() & ~Modifier.FINAL);
-                } finally {
+        String[] names = {"accessFlags", "modifiers"};
+        for (String name : names) {
+            try {
+                if (Modifier.isFinal(field.getModifiers())) {
+                    // Do all JREs implement Field with a private ivar called "modifiers"?
+                    final Field modifiersField = Field.class.getDeclaredField(name);
+                    final boolean doForceAccess = forceAccess && !modifiersField.isAccessible();
                     if (doForceAccess) {
-                        modifiersField.setAccessible(false);
+                        modifiersField.setAccessible(true);
                     }
+                    try {
+                        modifiersField.setInt(field, field.getModifiers() & ~Modifier.FINAL);
+                    } finally {
+                        if (doForceAccess) {
+                            modifiersField.setAccessible(false);
+                        }
+                    }
+                    return;
                 }
+            } catch (final NoSuchFieldException ignored) {
+                // The field class contains always a modifiers field
+            } catch (final IllegalAccessException ignored) {
+                // The modifiers field is made accessible
             }
-        } catch (final NoSuchFieldException ignored) {
-            // The field class contains always a modifiers field
-        } catch (final IllegalAccessException ignored) {
-            // The modifiers field is made accessible
         }
     }
 

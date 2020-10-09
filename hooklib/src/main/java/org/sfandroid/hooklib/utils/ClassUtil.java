@@ -42,7 +42,7 @@ import java.util.Set;
  *
  * @since 2.0
  */
-public class ClassUtils {
+public class ClassUtil {
     /**
      * The package separator character: <code>'&#x2e;' == {@value}</code>.
      */
@@ -154,7 +154,7 @@ public class ClassUtils {
      * <p>This constructor is public to permit tools that require a JavaBean
      * instance to operate.</p>
      */
-    public ClassUtils() {
+    public ClassUtil() {
         super();
     }
 
@@ -187,7 +187,7 @@ public class ClassUtils {
      */
     public static String getShortClassName(final Class<?> cls) {
         if (cls == null) {
-            return StringUtils.EMPTY;
+            return StringUtil.EMPTY;
         }
         return getShortClassName(cls.getName());
     }
@@ -205,8 +205,8 @@ public class ClassUtils {
      * @return the class name of the class without the package name or an empty string
      */
     public static String getShortClassName(String className) {
-        if (StringUtils.isEmpty(className)) {
-            return StringUtils.EMPTY;
+        if (StringUtil.isEmpty(className)) {
+            return StringUtil.EMPTY;
         }
 
         final StringBuilder arrayPrefix = new StringBuilder();
@@ -247,16 +247,23 @@ public class ClassUtils {
      */
     public static String getSimpleName(final Class<?> cls) {
         if (cls == null) {
-            return StringUtils.EMPTY;
+            return StringUtil.EMPTY;
         }
         return cls.getSimpleName();
     }
 
     public static String getName(final Class<?> cls) {
         if (cls == null) {
-            return StringUtils.EMPTY;
+            return StringUtil.EMPTY;
         }
         return cls.getName();
+    }
+
+    public static String getName(Object object) {
+        if (object == null) {
+            return StringUtil.EMPTY;
+        }
+        return getName(object.getClass());
     }
 
     public static String getName(Object object, final String valueIfNull) {
@@ -314,7 +321,7 @@ public class ClassUtils {
      */
     public static String getPackageName(final Class<?> cls) {
         if (cls == null) {
-            return StringUtils.EMPTY;
+            return StringUtil.EMPTY;
         }
         return getPackageName(cls.getName());
     }
@@ -329,8 +336,8 @@ public class ClassUtils {
      * @return the package name or an empty string
      */
     public static String getPackageName(String className) {
-        if (StringUtils.isEmpty(className)) {
-            return StringUtils.EMPTY;
+        if (StringUtil.isEmpty(className)) {
+            return StringUtil.EMPTY;
         }
 
         // Strip array encoding
@@ -344,7 +351,7 @@ public class ClassUtils {
 
         final int i = className.lastIndexOf(PACKAGE_SEPARATOR_CHAR);
         if (i == -1) {
-            return StringUtils.EMPTY;
+            return StringUtil.EMPTY;
         }
         return className.substring(0, i);
     }
@@ -361,7 +368,7 @@ public class ClassUtils {
      */
     public static String getAbbreviatedName(final Class<?> cls, int len) {
         if (cls == null) {
-            return StringUtils.EMPTY;
+            return StringUtil.EMPTY;
         }
         return getAbbreviatedName(cls.getName(), len);
     }
@@ -400,11 +407,11 @@ public class ClassUtils {
             throw new IllegalArgumentException("len must be > 0");
         }
         if (className == null) {
-            return StringUtils.EMPTY;
+            return StringUtil.EMPTY;
         }
 
         int availableSpace = len;
-        int packageLevels = StringUtils.countMatches(className, '.');
+        int packageLevels = StringUtil.countMatches(className, '.');
         String[] output = new String[packageLevels + 1];
         int endIndex = className.length() - 1;
         for (int level = packageLevels; level >= 0; level--) {
@@ -429,7 +436,7 @@ public class ClassUtils {
             endIndex = startIndex - 1;
         }
 
-        return StringUtils.join(output, '.');
+        return StringUtil.join(output, '.');
     }
 
     /**
@@ -632,14 +639,14 @@ public class ClassUtils {
      * @return {@code true} if assignment possible
      */
     public static boolean isAssignable(Class<?>[] classArray, Class<?>[] toClassArray, final boolean autoboxing) {
-        if (ArrayUtils.isSameLength(classArray, toClassArray) == false) {
+        if (ArrayUtil.isSameLength(classArray, toClassArray) == false) {
             return false;
         }
         if (classArray == null) {
-            classArray = ArrayUtils.EMPTY_CLASS_ARRAY;
+            classArray = ArrayUtil.EMPTY_CLASS_ARRAY;
         }
         if (toClassArray == null) {
-            toClassArray = ArrayUtils.EMPTY_CLASS_ARRAY;
+            toClassArray = ArrayUtil.EMPTY_CLASS_ARRAY;
         }
         for (int i = 0; i < classArray.length; i++) {
             if (isAssignable(classArray[i], toClassArray[i], autoboxing) == false) {
@@ -1026,22 +1033,22 @@ public class ClassUtils {
      */
     public static Class<?> getClass(final String className, final boolean initialize) throws ClassNotFoundException {
         final ClassLoader contextCL = Thread.currentThread().getContextClassLoader();
-        final ClassLoader loader = contextCL == null ? ClassUtils.class.getClassLoader() : contextCL;
+        final ClassLoader loader = contextCL == null ? ClassUtil.class.getClassLoader() : contextCL;
         return getClass(loader, className, initialize);
     }
 
     public static Class<?>[] getClass(final String[] classArray, final boolean initialize) throws ClassNotFoundException {
-        if (ArrayUtils.isEmpty(classArray)) {
-            return ArrayUtils.EMPTY_CLASS_ARRAY;
+        if (ArrayUtil.isEmpty(classArray)) {
+            return ArrayUtil.EMPTY_CLASS_ARRAY;
         }
         final ClassLoader contextCL = Thread.currentThread().getContextClassLoader();
-        final ClassLoader loader = contextCL == null ? ClassUtils.class.getClassLoader() : contextCL;
+        final ClassLoader loader = contextCL == null ? ClassUtil.class.getClassLoader() : contextCL;
         return getClass(loader, classArray, initialize);
     }
 
     public static Class<?>[] getClass(final ClassLoader loader, final String[] classArray, final boolean initialize) throws ClassNotFoundException {
-        if (ArrayUtils.isEmpty(classArray)) {
-            return ArrayUtils.EMPTY_CLASS_ARRAY;
+        if (ArrayUtil.isEmpty(classArray)) {
+            return ArrayUtil.EMPTY_CLASS_ARRAY;
         }
         Class<?>[] ret = new Class[classArray.length];
         for (int i = 0; i < classArray.length; i++) {
@@ -1052,28 +1059,28 @@ public class ClassUtils {
 
     public static Class<?> getClass(String className, Class<?> defaultClass, boolean initialize) throws ClassNotFoundException {
         final ClassLoader contextCL = Thread.currentThread().getContextClassLoader();
-        final ClassLoader loader = contextCL == null ? ClassUtils.class.getClassLoader() : contextCL;
+        final ClassLoader loader = contextCL == null ? ClassUtil.class.getClassLoader() : contextCL;
         return getClass(loader, className, defaultClass, initialize);
     }
 
     public static Class<?> getClass(ClassLoader loader, String className, Class<?> defaultClass, boolean initialize) throws ClassNotFoundException {
-        if (StringUtils.isEmpty(className)) {
+        if (StringUtil.isEmpty(className)) {
             return defaultClass;
         }
-        return loader == null ? ClassUtils.getClass(className, initialize) : ClassUtils.getClass(loader, className, initialize);
+        return loader == null ? ClassUtil.getClass(className, initialize) : ClassUtil.getClass(loader, className, initialize);
     }
 
     public static Class<?>[] getClass(String[] classArray, Class<?>[] defaultClasses, boolean initialize) throws ClassNotFoundException {
         final ClassLoader contextCL = Thread.currentThread().getContextClassLoader();
-        final ClassLoader loader = contextCL == null ? ClassUtils.class.getClassLoader() : contextCL;
+        final ClassLoader loader = contextCL == null ? ClassUtil.class.getClassLoader() : contextCL;
         return getClass(loader, classArray, defaultClasses, initialize);
     }
 
     public static Class<?>[] getClass(ClassLoader loader, String[] classArray, Class<?>[] defaultClasses, boolean initialize) throws ClassNotFoundException {
-        if (ArrayUtils.isEmpty(classArray)) {
+        if (ArrayUtil.isEmpty(classArray)) {
             return defaultClasses;
         }
-        return loader == null ? ClassUtils.getClass(classArray, initialize) : ClassUtils.getClass(loader, classArray, initialize);
+        return loader == null ? ClassUtil.getClass(classArray, initialize) : ClassUtil.getClass(loader, classArray, initialize);
     }
 
     /**
@@ -1126,7 +1133,7 @@ public class ClassUtils {
         }
 
         throw new NoSuchMethodException("Can't find a public method for " +
-                methodName + " " + ArrayUtils.toString(parameterTypes));
+                methodName + " " + ArrayUtil.toString(parameterTypes));
     }
 
     // Public method
@@ -1139,7 +1146,7 @@ public class ClassUtils {
      * @return the converted name
      */
     private static String toCanonicalName(String className) {
-        className = StringUtils.deleteWhitespace(className);
+        className = StringUtil.deleteWhitespace(className);
         if (className == null) {
             throw new NullPointerException("className must not be null.");
         } else if (className.endsWith("[]")) {
@@ -1175,7 +1182,7 @@ public class ClassUtils {
         if (array == null) {
             return null;
         } else if (array.length == 0) {
-            return ArrayUtils.EMPTY_CLASS_ARRAY;
+            return ArrayUtil.EMPTY_CLASS_ARRAY;
         }
         final Class<?>[] classes = new Class[array.length];
         for (int i = 0; i < array.length; i++) {
@@ -1211,7 +1218,7 @@ public class ClassUtils {
      */
     public static String getShortCanonicalName(final Class<?> cls) {
         if (cls == null) {
-            return StringUtils.EMPTY;
+            return StringUtil.EMPTY;
         }
         return getShortCanonicalName(cls.getName());
     }
@@ -1226,7 +1233,7 @@ public class ClassUtils {
      * @since 2.4
      */
     public static String getShortCanonicalName(final String canonicalName) {
-        return ClassUtils.getShortClassName(getCanonicalName(canonicalName));
+        return ClassUtil.getShortClassName(getCanonicalName(canonicalName));
     }
 
     /**
@@ -1256,7 +1263,7 @@ public class ClassUtils {
      */
     public static String getPackageCanonicalName(final Class<?> cls) {
         if (cls == null) {
-            return StringUtils.EMPTY;
+            return StringUtil.EMPTY;
         }
         return getPackageCanonicalName(cls.getName());
     }
@@ -1272,7 +1279,7 @@ public class ClassUtils {
      * @since 2.4
      */
     public static String getPackageCanonicalName(final String canonicalName) {
-        return ClassUtils.getPackageName(getCanonicalName(canonicalName));
+        return ClassUtil.getPackageName(getCanonicalName(canonicalName));
     }
 
     /**
@@ -1292,7 +1299,7 @@ public class ClassUtils {
      * @since 2.4
      */
     private static String getCanonicalName(String className) {
-        className = StringUtils.deleteWhitespace(className);
+        className = StringUtil.deleteWhitespace(className);
         if (className == null) {
             return null;
         }
@@ -1486,14 +1493,14 @@ public class ClassUtils {
     }
 
     public static boolean equal(Class<?>[] classArray, Class<?>[] toClassArray, final boolean autoboxing) {
-        if (!ArrayUtils.isSameLength(classArray, toClassArray)) {
+        if (!ArrayUtil.isSameLength(classArray, toClassArray)) {
             return false;
         }
         if (classArray == null) {
-            classArray = ArrayUtils.EMPTY_CLASS_ARRAY;
+            classArray = ArrayUtil.EMPTY_CLASS_ARRAY;
         }
         if (toClassArray == null) {
-            toClassArray = ArrayUtils.EMPTY_CLASS_ARRAY;
+            toClassArray = ArrayUtil.EMPTY_CLASS_ARRAY;
         }
 
         for (int i = 0; i < classArray.length; i++) {
@@ -1505,14 +1512,14 @@ public class ClassUtils {
     }
 
     public static boolean equal(Class<?>[] classArray, Class<?>[] toClassArray, final boolean autoboxing, final boolean compatible) {
-        if (!ArrayUtils.isSameLength(classArray, toClassArray)) {
+        if (!ArrayUtil.isSameLength(classArray, toClassArray)) {
             return false;
         }
         if (classArray == null) {
-            classArray = ArrayUtils.EMPTY_CLASS_ARRAY;
+            classArray = ArrayUtil.EMPTY_CLASS_ARRAY;
         }
         if (toClassArray == null) {
-            toClassArray = ArrayUtils.EMPTY_CLASS_ARRAY;
+            toClassArray = ArrayUtil.EMPTY_CLASS_ARRAY;
         }
 
         for (int i = 0; i < classArray.length; i++) {

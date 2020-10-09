@@ -18,9 +18,9 @@ package org.sfandroid.hooklib.dynamic;
 
 import org.sfandroid.hooklib.annotation.HookParameter;
 import org.sfandroid.hooklib.enums.HookCompatibleType;
-import org.sfandroid.hooklib.utils.ArrayUtils;
-import org.sfandroid.hooklib.utils.ObjectUtils;
-import org.sfandroid.hooklib.utils.StringUtils;
+import org.sfandroid.hooklib.utils.ArrayUtil;
+import org.sfandroid.hooklib.utils.ObjectUtil;
+import org.sfandroid.hooklib.utils.StringUtil;
 
 /**
  * 应该具有默认的方法签名, void xx();
@@ -37,7 +37,7 @@ public class DHookParameter {
     /**
      * 方法所有参数的类型
      */
-    public Class<?>[] pTypes = ArrayUtils.EMPTY_CLASS_ARRAY;
+    public Class<?>[] pTypes = ArrayUtil.EMPTY_CLASS_ARRAY;
     /**
      * 方法返回值类名
      */
@@ -64,18 +64,18 @@ public class DHookParameter {
             return DEFAULT;
         }
         DHookParameter ret = new DHookParameter();
-        if (!StringUtils.isEmpty(hookParameter.returnName())) {
+        if (!StringUtil.isEmpty(hookParameter.returnName())) {
             ret.rName = hookParameter.returnName();
         }
-        ret.rType = ObjectUtils.isNullClass(hookParameter.returnType()) ? null : hookParameter.returnType();
-        if (!ArrayUtils.isEmpty(hookParameter.names())) {
+        ret.rType = ObjectUtil.isNullClass(hookParameter.returnType()) ? null : hookParameter.returnType();
+        if (!ArrayUtil.isEmpty(hookParameter.names())) {
             ret.pNames = hookParameter.names();
         }
-        ret.pTypes = ObjectUtils.isNullClasses(hookParameter.params()) ? null : hookParameter.params();
-        if (!ArrayUtils.isEmpty(hookParameter.exceptionNames())) {
+        ret.pTypes = ObjectUtil.isNullClasses(hookParameter.params()) ? null : hookParameter.params();
+        if (!ArrayUtil.isEmpty(hookParameter.exceptionNames())) {
             ret.tNames = hookParameter.exceptionNames();
         }
-        if (!ObjectUtils.isNullClasses(hookParameter.exceptionTypes())) {
+        if (!ObjectUtil.isNullClasses(hookParameter.exceptionTypes())) {
             ret.tTypes = hookParameter.exceptionTypes();
         }
         ret.autoBox = hookParameter.autoBox();
@@ -89,13 +89,13 @@ public class DHookParameter {
     }
 
     public boolean isEmptyParameter() {
-        if (StringUtils.isNotEmpty(rName) || rType != null) {
+        if (StringUtil.isNotEmpty(rName) || rType != null) {
             return false;
         }
-        if (!ArrayUtils.isEmpty(pNames) || !ArrayUtils.isEmpty(pTypes)) {
+        if (!ArrayUtil.isEmpty(pNames) || !ArrayUtil.isEmpty(pTypes)) {
             return false;
         }
-        if (!ArrayUtils.isEmpty(tNames) || !ArrayUtils.isEmpty(tTypes)) {
+        if (!ArrayUtil.isEmpty(tNames) || !ArrayUtil.isEmpty(tTypes)) {
             return false;
         }
         return true;

@@ -17,8 +17,8 @@
 package org.sfandroid.hooklib.dynamic;
 
 import org.sfandroid.hooklib.annotation.HookMethodConfigure;
-import org.sfandroid.hooklib.utils.ArrayUtils;
-import org.sfandroid.hooklib.utils.StringUtils;
+import org.sfandroid.hooklib.utils.ArrayUtil;
+import org.sfandroid.hooklib.utils.StringUtil;
 
 /**
  * 动态Hook配置,与{@link HookMethodConfigure}大部分参数一一对应
@@ -71,19 +71,22 @@ public class DHook {
      * @param HookMethodConfigure Hook配置注解
      * @return 动态配置对象
      */
-    public static DHook toDHook(HookMethodConfigure HookMethodConfigure) {
+    public static DHook toDHook(String name, boolean enable, HookMethodConfigure HookMethodConfigure) {
         DHook hook = new DHook();
         if (HookMethodConfigure == null) {
             return hook;
         }
-        hook.enable = HookMethodConfigure.value();
-        if (!StringUtils.isEmpty(HookMethodConfigure.name())) {
-            hook.name = HookMethodConfigure.name();
+        hook.enable = enable;
+        if (!StringUtil.isEmpty(HookMethodConfigure.value())) {
+            hook.name = HookMethodConfigure.value();
+        }
+        if (StringUtil.isEmpty(hook.name) && StringUtil.isNoneEmpty(name)) {
+            hook.name = name;
         }
         hook.find = HookMethodConfigure.find();
         hook.findAll = HookMethodConfigure.findAll();
         hook.all = HookMethodConfigure.all();
-        if (!ArrayUtils.isEmpty(HookMethodConfigure.bind())) {
+        if (!ArrayUtil.isEmpty(HookMethodConfigure.bind())) {
             if (HookMethodConfigure.before()) {
                 hook.beforeBind = HookMethodConfigure.bind()[0];
             } else {
@@ -93,6 +96,5 @@ public class DHook {
         hook.findSuper = HookMethodConfigure.findSuper();
         return hook;
     }
-
 
 }

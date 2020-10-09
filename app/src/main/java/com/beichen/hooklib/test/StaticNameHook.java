@@ -21,13 +21,13 @@ import android.util.Log;
 import org.sfandroid.hooklib.IHook;
 import org.sfandroid.hooklib.XC_MethodHook;
 import org.sfandroid.hooklib.annotation.HookClass;
-import org.sfandroid.hooklib.annotation.HookMethodConfigure;
 import org.sfandroid.hooklib.annotation.HookFieldConfigure;
-import org.sfandroid.hooklib.annotation.HookMethod;
-import org.sfandroid.hooklib.annotation.HookParameter;
 import org.sfandroid.hooklib.annotation.HookImplicit;
+import org.sfandroid.hooklib.annotation.HookMethod;
+import org.sfandroid.hooklib.annotation.HookMethodConfigure;
+import org.sfandroid.hooklib.annotation.HookParameter;
 import org.sfandroid.hooklib.enums.HookCompatibleType;
-import org.sfandroid.hooklib.reflect.FieldUtils;
+import org.sfandroid.hooklib.reflect.FieldUtil;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -44,24 +44,24 @@ public class StaticNameHook implements IHook {
     public static void instanceOnlyThisAfter(Object thiz) {
         Log.i(TAG, "Default only this object callback instance method after: " + thiz);
         try {
-            FieldUtils.writeDeclaredField(thiz, "hook", false, true);
+            FieldUtil.writeDeclaredField(thiz, "hook", false, true);
         } catch (IllegalAccessException e) {
             e.printStackTrace();
         }
     }
 
-    @HookMethod(hook = @HookMethodConfigure(name = "instanceOnlyHookWrap", before = false, all = true))
+    @HookMethod(hook = @HookMethodConfigure(value = "instanceOnlyHookWrap", before = false, all = true))
     public static void instanceOnlyHookWrapWrapAfter(XC_MethodHook.MethodHookParam param) {
         Log.i(TAG, "Default only MethodHookParam callback instance method after");
         param.args[0] = false;
     }
 
-    @HookMethod(hook = @HookMethodConfigure(name = "instanceHookWrapAndThis", before = false), param = @HookParameter(params = boolean.class))
+    @HookMethod(hook = @HookMethodConfigure(value = "instanceHookWrapAndThis", before = false), param = @HookParameter(params = boolean.class))
     public static void instanceHookWrapAndThisAfter(XC_MethodHook.MethodHookParam param, Object thiz) {
         Log.i(TAG, "Default MethodHookParam and this object callback instance method after: " + thiz);
         param.args[0] = false;
         try {
-            FieldUtils.writeDeclaredField(thiz, "hook", false, true);
+            FieldUtil.writeDeclaredField(thiz, "hook", false, true);
         } catch (IllegalAccessException e) {
             e.printStackTrace();
         }
@@ -89,40 +89,40 @@ public class StaticNameHook implements IHook {
         Log.i(TAG, "Default MethodHookParam, parameters and this object callback instance method after: " + thiz);
         param.args[0] = false;
         try {
-            FieldUtils.writeDeclaredField(thiz, "hook", false, true);
+            FieldUtil.writeDeclaredField(thiz, "hook", false, true);
         } catch (IllegalAccessException e) {
             e.printStackTrace();
         }
     }
 
-    @HookMethod(hook = @HookMethodConfigure(name = "instanceOnlyThis"))
+    @HookMethod(hook = @HookMethodConfigure(value = "instanceOnlyThis"))
     public void instanceOnlyThisBefore(Object thiz) {
         Log.i(TAG, "Default only this object callback instance method before: " + thiz);
         try {
-            FieldUtils.writeDeclaredField(thiz, "hook", true, true);
+            FieldUtil.writeDeclaredField(thiz, "hook", true, true);
         } catch (IllegalAccessException e) {
             e.printStackTrace();
         }
     }
 
-    @HookMethod(hook = @HookMethodConfigure(name = "instanceOnlyHookWrap"), param = @HookParameter(params = boolean.class))
+    @HookMethod(hook = @HookMethodConfigure(value = "instanceOnlyHookWrap"), param = @HookParameter(params = boolean.class))
     public void instanceOnlyHookWrapBefore(XC_MethodHook.MethodHookParam param) {
         Log.i(TAG, "Default only MethodHookParam callback instance method before");
         param.args[0] = true;
     }
 
-    @HookMethod(hook = @HookMethodConfigure(name = "instanceHookWrapAndThis"), param = @HookParameter(params = boolean.class))
+    @HookMethod(hook = @HookMethodConfigure(value = "instanceHookWrapAndThis"), param = @HookParameter(params = boolean.class))
     public void instanceHookWrapAndThisBefore(XC_MethodHook.MethodHookParam param, Object thiz) {
         Log.i(TAG, "Default MethodHookParam and this object callback instance method before: " + thiz);
         param.args[0] = true;
         try {
-            FieldUtils.writeDeclaredField(thiz, "hook", true, true);
+            FieldUtil.writeDeclaredField(thiz, "hook", true, true);
         } catch (IllegalAccessException e) {
             e.printStackTrace();
         }
     }
 
-    @HookMethod(hook = @HookMethodConfigure(name = "instanceParam"), param = @HookParameter(params = {int.class,
+    @HookMethod(hook = @HookMethodConfigure(value = "instanceParam"), param = @HookParameter(params = {int.class,
             int.class, List.class, List.class}, autoBox = true, compatible = HookCompatibleType.DOWN))
     public void instanceParamBefore(int i1, Integer i2, List list1, ArrayList list2) {
         Log.i(TAG, "Default parameters callback instance method before");
@@ -130,7 +130,7 @@ public class StaticNameHook implements IHook {
         list2.add(new Object());
     }
 
-    @HookMethod(hook = @HookMethodConfigure(name = "instanceHookWrapAndParam"), param = @HookParameter(params = {boolean.class, int.class, List.class}))
+    @HookMethod(hook = @HookMethodConfigure(value = "instanceHookWrapAndParam"), param = @HookParameter(params = {boolean.class, int.class, List.class}))
     public void instanceHookWrapAndParamBefore(XC_MethodHook.MethodHookParam param, boolean hooked, int i1, List list) {
         Log.i(TAG, "Default MethodHookParam and parameters callback instance method before");
         param.args[0] = true;
@@ -143,7 +143,7 @@ public class StaticNameHook implements IHook {
         Log.i(TAG, "Default MethodHookParam, parameters and this object callback instance method before: " + thiz);
         param.args[0] = true;
         try {
-            FieldUtils.writeDeclaredField(thiz, "hook", true, true);
+            FieldUtil.writeDeclaredField(thiz, "hook", true, true);
         } catch (IllegalAccessException e) {
             e.printStackTrace();
         }

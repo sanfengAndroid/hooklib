@@ -16,7 +16,7 @@
 
 package org.sfandroid.hooklib.reflect;
 
-import org.sfandroid.hooklib.utils.ClassUtils;
+import org.sfandroid.hooklib.utils.ClassUtil;
 
 import java.lang.reflect.AccessibleObject;
 import java.lang.reflect.Constructor;
@@ -27,11 +27,11 @@ import java.lang.reflect.Modifier;
 
 /**
  * Contains common code for working with {@link java.lang.reflect.Method Methods}/{@link java.lang.reflect.Constructor Constructors},
- * extracted and refactored from {@link MethodUtils} when it was imported from Commons BeanUtils.
+ * extracted and refactored from {@link MethodUtil} when it was imported from Commons BeanUtils.
  *
  * @since 2.5
  */
-public abstract class MemberUtils {
+public abstract class MemberUtil {
     // TODO extract an interface to implement compareParameterSets(...)?
 
     private static final int ACCESS_TEST = Modifier.PUBLIC | Modifier.PROTECTED | Modifier.PRIVATE;
@@ -205,7 +205,7 @@ public abstract class MemberUtils {
         }
         float cost = 0.0f;
         while (srcClass != null && !destClass.equals(srcClass)) {
-            if (destClass.isInterface() && ClassUtils.isAssignable(srcClass, destClass)) {
+            if (destClass.isInterface() && ClassUtil.isAssignable(srcClass, destClass)) {
                 // slight penalty for interface match.
                 // we still want an exact match to override an interface match,
                 // but
@@ -241,7 +241,7 @@ public abstract class MemberUtils {
         if (!cls.isPrimitive()) {
             // slight unwrapping penalty
             cost += 0.1f;
-            cls = ClassUtils.wrapperToPrimitive(cls);
+            cls = ClassUtil.wrapperToPrimitive(cls);
         }
         for (int i = 0; cls != destClass && i < ORDERED_PRIMITIVE_TYPES.length; i++) {
             if (cls == ORDERED_PRIMITIVE_TYPES[i]) {
@@ -255,11 +255,11 @@ public abstract class MemberUtils {
     }
 
     public static boolean isMatchingMethod(Method method, Class<?>[] parameterTypes) {
-        return MemberUtils.isMatchingExecutable(Executable.of(method), parameterTypes);
+        return MemberUtil.isMatchingExecutable(Executable.of(method), parameterTypes);
     }
 
     public static boolean isMatchingConstructor(Constructor<?> method, Class<?>[] parameterTypes) {
-        return MemberUtils.isMatchingExecutable(Executable.of(method), parameterTypes);
+        return MemberUtil.isMatchingExecutable(Executable.of(method), parameterTypes);
     }
 
     private static boolean isMatchingExecutable(Executable method, Class<?>[] parameterTypes) {
@@ -267,19 +267,19 @@ public abstract class MemberUtils {
         if (method.isVarArgs()) {
             int i;
             for (i = 0; i < methodParameterTypes.length - 1 && i < parameterTypes.length; i++) {
-                if (!ClassUtils.isAssignable(parameterTypes[i], methodParameterTypes[i], true)) {
+                if (!ClassUtil.isAssignable(parameterTypes[i], methodParameterTypes[i], true)) {
                     return false;
                 }
             }
             Class<?> varArgParameterType = methodParameterTypes[methodParameterTypes.length - 1].getComponentType();
             for (; i < parameterTypes.length; i++) {
-                if (!ClassUtils.isAssignable(parameterTypes[i], varArgParameterType, true)) {
+                if (!ClassUtil.isAssignable(parameterTypes[i], varArgParameterType, true)) {
                     return false;
                 }
             }
             return true;
         }
-        return ClassUtils.isAssignable(parameterTypes, methodParameterTypes, true);
+        return ClassUtil.isAssignable(parameterTypes, methodParameterTypes, true);
     }
 
     /**

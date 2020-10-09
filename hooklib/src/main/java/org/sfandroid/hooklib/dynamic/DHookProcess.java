@@ -18,7 +18,7 @@ package org.sfandroid.hooklib.dynamic;
 
 import org.sfandroid.hooklib.annotation.HookProcess;
 import org.sfandroid.hooklib.enums.HookProcessType;
-import org.sfandroid.hooklib.utils.ArrayUtils;
+import org.sfandroid.hooklib.utils.ArrayUtil;
 
 import java.util.Arrays;
 
@@ -32,26 +32,35 @@ public class DHookProcess {
     public HookProcessType hookProcessType = HookProcessType.ALL;
     public String[] processes;
 
-    public DHookProcess() {
+    private DHookProcess() {
+    }
+
+    private DHookProcess(HookProcessType type, String[] processes) {
+        this.hookProcessType = type;
+        this.processes = processes;
     }
 
     public DHookProcess(HookProcessType hookProcessType) {
         this.hookProcessType = hookProcessType;
     }
 
+    public static DHookProcess create(HookProcessType type, String[] processes) {
+        return new DHookProcess(type, processes);
+    }
+
     public static DHookProcess toDProcess(HookProcess process) {
         if (process == null) {
-            return DEFAULT;
+            return null;
         }
         DHookProcess dp = new DHookProcess();
         dp.hookProcessType = process.value();
-        if (!ArrayUtils.isEmpty(process.processes())) {
+        if (!ArrayUtil.isEmpty(process.processes())) {
             dp.processes = process.processes();
         }
         return optimization(dp);
     }
 
-    public static DHookProcess optimization(DHookProcess process) {
+    private static DHookProcess optimization(DHookProcess process) {
         return DEFAULT.equals(process) ? DEFAULT : process;
     }
 

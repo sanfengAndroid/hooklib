@@ -455,7 +455,7 @@ public class Validate {
         if (chars == null) {
             throw new NullPointerException(String.format(message, values));
         }
-        if (StringUtils.isBlank(chars)) {
+        if (StringUtil.isBlank(chars)) {
             throw new IllegalArgumentException(String.format(message, values));
         }
         return chars;
@@ -513,7 +513,7 @@ public class Validate {
         notNull(array);
         for (int i = 0; i < array.length; i++) {
             if (array[i] == null) {
-                final Object[] values2 = ArrayUtils.add(values, Integer.valueOf(i));
+                final Object[] values2 = ArrayUtil.add(values, Integer.valueOf(i));
                 throw new IllegalArgumentException(String.format(message, values2));
             }
         }
@@ -576,7 +576,7 @@ public class Validate {
         int i = 0;
         for (final Iterator<?> it = iterable.iterator(); it.hasNext(); i++) {
             if (it.next() == null) {
-                final Object[] values2 = ArrayUtils.addAll(values, Integer.valueOf(i));
+                final Object[] values2 = ArrayUtil.addAll(values, Integer.valueOf(i));
                 throw new IllegalArgumentException(String.format(message, values2));
             }
         }

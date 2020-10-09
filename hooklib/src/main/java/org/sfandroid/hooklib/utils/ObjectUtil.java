@@ -39,7 +39,7 @@ import java.util.TreeSet;
  * @since 1.0
  */
 //@Immutable
-public class ObjectUtils {
+public class ObjectUtil {
 
     /**
      * <p>Singleton used as a {@code null} placeholder where
@@ -72,7 +72,7 @@ public class ObjectUtils {
      * <p>This constructor is public to permit tools that require a JavaBean
      * instance to operate.</p>
      */
-    public ObjectUtils() {
+    public ObjectUtil() {
         super();
     }
 
@@ -254,7 +254,7 @@ public class ObjectUtils {
      * @return {@code false} if the values of both objects are the same
      */
     public static boolean notEqual(final Object object1, final Object object2) {
-        return ObjectUtils.equals(object1, object2) == false;
+        return ObjectUtil.equals(object1, object2) == false;
     }
 
     /**
@@ -305,7 +305,7 @@ public class ObjectUtils {
         int hash = 1;
         if (objects != null) {
             for (final Object object : objects) {
-                final int tmpHash = ObjectUtils.hashCode(object);
+                final int tmpHash = ObjectUtil.hashCode(object);
                 hash = hash * 31 + tmpHash;
             }
         }
@@ -430,7 +430,7 @@ public class ObjectUtils {
      *
      * @param obj the Object to {@code toString}, may be null
      * @return the passed in Object's toString, or {@code ""} if {@code null} input
-     * @see StringUtils#defaultString(String)
+     * @see StringUtil#defaultString(String)
      * @see String#valueOf(Object)
      * @since 2.0
      * @deprecated this method has been replaced by {@code java.util.Objects.toString(Object)} in Java 7 and will be
@@ -439,7 +439,7 @@ public class ObjectUtils {
      */
     @Deprecated
     public static String toString(final Object obj) {
-        return obj == null ? StringUtils.EMPTY : obj.toString();
+        return obj == null ? StringUtil.EMPTY : obj.toString();
     }
 
     /**
@@ -457,7 +457,7 @@ public class ObjectUtils {
      * @param obj     the Object to {@code toString}, may be null
      * @param nullStr the String to return if {@code null} input, may be null
      * @return the passed in Object's toString, or {@code nullStr} if {@code null} input
-     * @see StringUtils#defaultString(String, String)
+     * @see StringUtil#defaultString(String, String)
      * @see String#valueOf(Object)
      * @since 2.0
      * @deprecated this method has been replaced by {@code java.util.Objects.toString(Object, String)} in Java 7 and
@@ -618,7 +618,7 @@ public class ObjectUtils {
      */
     @SuppressWarnings({"unchecked", "varargs"})
     public static <T> T mode(final T... items) {
-        if (ArrayUtils.isNotEmpty(items)) {
+        if (ArrayUtil.isNotEmpty(items)) {
             final HashMap<T, MutableInt> occurrences = new HashMap<T, MutableInt>(items.length);
             for (final T t : items) {
                 final MutableInt count = occurrences.get(t);
@@ -1010,7 +1010,7 @@ public class ObjectUtils {
         if (classArray == null) {
             return true;
         }
-        return ArrayUtils.contains(classArray, Null.class);
+        return ArrayUtil.contains(classArray, Null.class);
     }
 
     /**
@@ -1047,7 +1047,7 @@ public class ObjectUtils {
          * @return the singleton value
          */
         private Object readResolve() {
-            return ObjectUtils.NULL;
+            return ObjectUtil.NULL;
         }
     }
 }

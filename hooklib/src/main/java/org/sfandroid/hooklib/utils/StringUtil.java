@@ -114,7 +114,7 @@ import java.util.regex.Pattern;
  * @since 1.0
  */
 //@Immutable
-public class StringUtils {
+public class StringUtil {
     // Performance testing notes (JDK 1.4, Jul03, scolebourne)
     // Whitespace:
     // Character.isWhitespace() is faster than WHITESPACE.indexOf()
@@ -187,7 +187,7 @@ public class StringUtils {
      * <p>This constructor is public to permit tools that require a JavaBean
      * instance to operate.</p>
      */
-    public StringUtils() {
+    public StringUtil() {
         super();
     }
 
@@ -254,7 +254,7 @@ public class StringUtils {
      * @since 3.2
      */
     public static boolean isAnyEmpty(final CharSequence... css) {
-        if (ArrayUtils.isEmpty(css)) {
+        if (ArrayUtil.isEmpty(css)) {
             return true;
         }
         for (final CharSequence cs : css) {
@@ -355,7 +355,7 @@ public class StringUtils {
      * @since 3.2
      */
     public static boolean isAnyBlank(final CharSequence... css) {
-        if (ArrayUtils.isEmpty(css)) {
+        if (ArrayUtil.isEmpty(css)) {
             return true;
         }
         for (final CharSequence cs : css) {
@@ -881,7 +881,7 @@ public class StringUtils {
         final StringBuilder decomposed = new StringBuilder(Normalizer.normalize(input, Normalizer.Form.NFD));
         convertRemainingAccentCharacters(decomposed);
         // Note that this doesn't correctly remove ligatures...
-        return pattern.matcher(decomposed).replaceAll(StringUtils.EMPTY);
+        return pattern.matcher(decomposed).replaceAll(StringUtil.EMPTY);
     }
 
     private static void convertRemainingAccentCharacters(StringBuilder decomposed) {
@@ -933,7 +933,7 @@ public class StringUtils {
         if (cs1 instanceof String && cs2 instanceof String) {
             return cs1.equals(cs2);
         }
-        return CharSequenceUtils.regionMatches(cs1, false, 0, cs2, 0, cs1.length());
+        return CharSequenceUtil.regionMatches(cs1, false, 0, cs2, 0, cs1.length());
     }
 
     /**
@@ -965,7 +965,7 @@ public class StringUtils {
         } else if (str1.length() != str2.length()) {
             return false;
         } else {
-            return CharSequenceUtils.regionMatches(str1, true, 0, str2, 0, str1.length());
+            return CharSequenceUtil.regionMatches(str1, true, 0, str2, 0, str1.length());
         }
     }
 
@@ -1168,7 +1168,7 @@ public class StringUtils {
      * @since 3.5
      */
     public static boolean equalsAny(final CharSequence string, final CharSequence... searchStrings) {
-        if (ArrayUtils.isNotEmpty(searchStrings)) {
+        if (ArrayUtil.isNotEmpty(searchStrings)) {
             for (CharSequence next : searchStrings) {
                 if (equals(string, next)) {
                     return true;
@@ -1199,7 +1199,7 @@ public class StringUtils {
      * @since 3.5
      */
     public static boolean equalsAnyIgnoreCase(final CharSequence string, final CharSequence... searchStrings) {
-        if (ArrayUtils.isNotEmpty(searchStrings)) {
+        if (ArrayUtil.isNotEmpty(searchStrings)) {
             for (CharSequence next : searchStrings) {
                 if (equalsIgnoreCase(string, next)) {
                     return true;
@@ -1236,7 +1236,7 @@ public class StringUtils {
         if (isEmpty(seq)) {
             return INDEX_NOT_FOUND;
         }
-        return CharSequenceUtils.indexOf(seq, searchChar, 0);
+        return CharSequenceUtil.indexOf(seq, searchChar, 0);
     }
 
     /**
@@ -1269,7 +1269,7 @@ public class StringUtils {
         if (isEmpty(seq)) {
             return INDEX_NOT_FOUND;
         }
-        return CharSequenceUtils.indexOf(seq, searchChar, startPos);
+        return CharSequenceUtil.indexOf(seq, searchChar, startPos);
     }
 
     /**
@@ -1300,7 +1300,7 @@ public class StringUtils {
         if (seq == null || searchSeq == null) {
             return INDEX_NOT_FOUND;
         }
-        return CharSequenceUtils.indexOf(seq, searchSeq, 0);
+        return CharSequenceUtil.indexOf(seq, searchSeq, 0);
     }
 
     /**
@@ -1340,7 +1340,7 @@ public class StringUtils {
         if (seq == null || searchSeq == null) {
             return INDEX_NOT_FOUND;
         }
-        return CharSequenceUtils.indexOf(seq, searchSeq, startPos);
+        return CharSequenceUtil.indexOf(seq, searchSeq, startPos);
     }
 
     /**
@@ -1425,9 +1425,9 @@ public class StringUtils {
         int index = lastIndex ? str.length() : INDEX_NOT_FOUND;
         do {
             if (lastIndex) {
-                index = CharSequenceUtils.lastIndexOf(str, searchStr, index - 1); // step backwards thru string
+                index = CharSequenceUtil.lastIndexOf(str, searchStr, index - 1); // step backwards thru string
             } else {
-                index = CharSequenceUtils.indexOf(str, searchStr, index + 1); // step forwards through string
+                index = CharSequenceUtil.indexOf(str, searchStr, index + 1); // step forwards through string
             }
             if (index < 0) {
                 return index;
@@ -1513,7 +1513,7 @@ public class StringUtils {
             return startPos;
         }
         for (int i = startPos; i < endLimit; i++) {
-            if (CharSequenceUtils.regionMatches(str, true, i, searchStr, 0, searchStr.length())) {
+            if (CharSequenceUtil.regionMatches(str, true, i, searchStr, 0, searchStr.length())) {
                 return i;
             }
         }
@@ -1547,7 +1547,7 @@ public class StringUtils {
         if (isEmpty(seq)) {
             return INDEX_NOT_FOUND;
         }
-        return CharSequenceUtils.lastIndexOf(seq, searchChar, seq.length());
+        return CharSequenceUtil.lastIndexOf(seq, searchChar, seq.length());
     }
 
     /**
@@ -1585,7 +1585,7 @@ public class StringUtils {
         if (isEmpty(seq)) {
             return INDEX_NOT_FOUND;
         }
-        return CharSequenceUtils.lastIndexOf(seq, searchChar, startPos);
+        return CharSequenceUtil.lastIndexOf(seq, searchChar, startPos);
     }
 
     /**
@@ -1615,7 +1615,7 @@ public class StringUtils {
         if (seq == null || searchSeq == null) {
             return INDEX_NOT_FOUND;
         }
-        return CharSequenceUtils.lastIndexOf(seq, searchSeq, seq.length());
+        return CharSequenceUtil.lastIndexOf(seq, searchSeq, seq.length());
     }
 
     /**
@@ -1696,7 +1696,7 @@ public class StringUtils {
         if (seq == null || searchSeq == null) {
             return INDEX_NOT_FOUND;
         }
-        return CharSequenceUtils.lastIndexOf(seq, searchSeq, startPos);
+        return CharSequenceUtil.lastIndexOf(seq, searchSeq, startPos);
     }
 
     /**
@@ -1776,7 +1776,7 @@ public class StringUtils {
         }
 
         for (int i = startPos; i >= 0; i--) {
-            if (CharSequenceUtils.regionMatches(str, true, i, searchStr, 0, searchStr.length())) {
+            if (CharSequenceUtil.regionMatches(str, true, i, searchStr, 0, searchStr.length())) {
                 return i;
             }
         }
@@ -1810,7 +1810,7 @@ public class StringUtils {
         if (isEmpty(seq)) {
             return false;
         }
-        return CharSequenceUtils.indexOf(seq, searchChar, 0) >= 0;
+        return CharSequenceUtil.indexOf(seq, searchChar, 0) >= 0;
     }
 
     /**
@@ -1839,7 +1839,7 @@ public class StringUtils {
         if (seq == null || searchSeq == null) {
             return false;
         }
-        return CharSequenceUtils.indexOf(seq, searchSeq, 0) >= 0;
+        return CharSequenceUtil.indexOf(seq, searchSeq, 0) >= 0;
     }
 
     /**
@@ -1873,7 +1873,7 @@ public class StringUtils {
         final int len = searchStr.length();
         final int max = str.length() - len;
         for (int i = 0; i <= max; i++) {
-            if (CharSequenceUtils.regionMatches(str, true, i, searchStr, 0, len)) {
+            if (CharSequenceUtil.regionMatches(str, true, i, searchStr, 0, len)) {
                 return true;
             }
         }
@@ -1930,7 +1930,7 @@ public class StringUtils {
      * @since 3.0 Changed signature from indexOfAny(String, char[]) to indexOfAny(CharSequence, char...)
      */
     public static int indexOfAny(final CharSequence cs, final char... searchChars) {
-        if (isEmpty(cs) || ArrayUtils.isEmpty(searchChars)) {
+        if (isEmpty(cs) || ArrayUtil.isEmpty(searchChars)) {
             return INDEX_NOT_FOUND;
         }
         final int csLen = cs.length();
@@ -2014,7 +2014,7 @@ public class StringUtils {
      * @since 3.0 Changed signature from containsAny(String, char[]) to containsAny(CharSequence, char...)
      */
     public static boolean containsAny(final CharSequence cs, final char... searchChars) {
-        if (isEmpty(cs) || ArrayUtils.isEmpty(searchChars)) {
+        if (isEmpty(cs) || ArrayUtil.isEmpty(searchChars)) {
             return false;
         }
         final int csLength = cs.length();
@@ -2076,7 +2076,7 @@ public class StringUtils {
         if (searchChars == null) {
             return false;
         }
-        return containsAny(cs, CharSequenceUtils.toCharArray(searchChars));
+        return containsAny(cs, CharSequenceUtil.toCharArray(searchChars));
     }
 
     /**
@@ -2104,7 +2104,7 @@ public class StringUtils {
      * @since 3.4
      */
     public static boolean containsAny(CharSequence cs, CharSequence... searchCharSequences) {
-        if (isEmpty(cs) || ArrayUtils.isEmpty(searchCharSequences)) {
+        if (isEmpty(cs) || ArrayUtil.isEmpty(searchCharSequences)) {
             return false;
         }
         for (CharSequence searchCharSequence : searchCharSequences) {
@@ -2143,7 +2143,7 @@ public class StringUtils {
      * @since 3.0 Changed signature from indexOfAnyBut(String, char[]) to indexOfAnyBut(CharSequence, char...)
      */
     public static int indexOfAnyBut(final CharSequence cs, final char... searchChars) {
-        if (isEmpty(cs) || ArrayUtils.isEmpty(searchChars)) {
+        if (isEmpty(cs) || ArrayUtil.isEmpty(searchChars)) {
             return INDEX_NOT_FOUND;
         }
         final int csLen = cs.length();
@@ -2199,10 +2199,10 @@ public class StringUtils {
         final int strLen = seq.length();
         for (int i = 0; i < strLen; i++) {
             final char ch = seq.charAt(i);
-            final boolean chFound = CharSequenceUtils.indexOf(searchChars, ch, 0) >= 0;
+            final boolean chFound = CharSequenceUtil.indexOf(searchChars, ch, 0) >= 0;
             if (i + 1 < strLen && Character.isHighSurrogate(ch)) {
                 final char ch2 = seq.charAt(i + 1);
-                if (chFound && CharSequenceUtils.indexOf(searchChars, ch2, 0) < 0) {
+                if (chFound && CharSequenceUtil.indexOf(searchChars, ch2, 0) < 0) {
                     return i;
                 }
             } else {
@@ -2414,7 +2414,7 @@ public class StringUtils {
             if (search == null) {
                 continue;
             }
-            tmp = CharSequenceUtils.indexOf(str, search, 0);
+            tmp = CharSequenceUtil.indexOf(str, search, 0);
             if (tmp == INDEX_NOT_FOUND) {
                 continue;
             }
@@ -2465,7 +2465,7 @@ public class StringUtils {
             if (search == null) {
                 continue;
             }
-            tmp = CharSequenceUtils.lastIndexOf(str, search, str.length());
+            tmp = CharSequenceUtil.lastIndexOf(str, search, str.length());
             if (tmp > ret) {
                 ret = tmp;
             }
@@ -2962,7 +2962,7 @@ public class StringUtils {
         }
         final int strLen = str.length();
         if (strLen == 0) {
-            return ArrayUtils.EMPTY_STRING_ARRAY;
+            return ArrayUtil.EMPTY_STRING_ARRAY;
         }
         final int closeLen = close.length();
         final int openLen = open.length();
@@ -3253,7 +3253,7 @@ public class StringUtils {
         final int len = str.length();
 
         if (len == 0) {
-            return ArrayUtils.EMPTY_STRING_ARRAY;
+            return ArrayUtil.EMPTY_STRING_ARRAY;
         }
 
         if (separator == null || EMPTY.equals(separator)) {
@@ -3396,7 +3396,7 @@ public class StringUtils {
         }
         final int len = str.length();
         if (len == 0) {
-            return ArrayUtils.EMPTY_STRING_ARRAY;
+            return ArrayUtil.EMPTY_STRING_ARRAY;
         }
         final List<String> list = new ArrayList<String>();
         int i = 0, start = 0;
@@ -3523,7 +3523,7 @@ public class StringUtils {
         }
         final int len = str.length();
         if (len == 0) {
-            return ArrayUtils.EMPTY_STRING_ARRAY;
+            return ArrayUtil.EMPTY_STRING_ARRAY;
         }
         final List<String> list = new ArrayList<String>();
         int sizePlus1 = 1;
@@ -3671,7 +3671,7 @@ public class StringUtils {
             return null;
         }
         if (str.isEmpty()) {
-            return ArrayUtils.EMPTY_STRING_ARRAY;
+            return ArrayUtil.EMPTY_STRING_ARRAY;
         }
         final char[] c = str.toCharArray();
         final List<String> list = new ArrayList<String>();
@@ -4450,7 +4450,7 @@ public class StringUtils {
         if (!iterator.hasNext()) {
             @SuppressWarnings("deprecation")
             // ObjectUtils.toString(Object) has been deprecated in 3.2
-            final String result = ObjectUtils.toString(first);
+            final String result = ObjectUtil.toString(first);
             return result;
         }
 
@@ -4497,7 +4497,7 @@ public class StringUtils {
         if (!iterator.hasNext()) {
             @SuppressWarnings("deprecation")
             // ObjectUtils.toString(Object) has been deprecated in 3.2
-            final String result = ObjectUtils.toString(first);
+            final String result = ObjectUtil.toString(first);
             return result;
         }
 
@@ -4586,7 +4586,7 @@ public class StringUtils {
             throw new IllegalArgumentException("Object varargs must not be null");
         }
 
-        final String sanitizedSeparator = defaultString(separator, StringUtils.EMPTY);
+        final String sanitizedSeparator = defaultString(separator, StringUtil.EMPTY);
 
         final StringBuilder result = new StringBuilder();
 
@@ -4594,7 +4594,7 @@ public class StringUtils {
         while (iterator.hasNext()) {
             @SuppressWarnings("deprecation")
             // o.k. to use as long as we do not require java 7 or greater
-            final String value = ObjectUtils.toString(iterator.next());
+            final String value = ObjectUtil.toString(iterator.next());
             result.append(value);
 
             if (iterator.hasNext()) {
@@ -4924,7 +4924,7 @@ public class StringUtils {
      * @since 3.5
      */
     public static String removeAll(final String text, final String regex) {
-        return replaceAll(text, regex, StringUtils.EMPTY);
+        return replaceAll(text, regex, StringUtil.EMPTY);
     }
 
     /**
@@ -4967,7 +4967,7 @@ public class StringUtils {
      * @since 3.5
      */
     public static String removeFirst(final String text, final String regex) {
-        return replaceFirst(text, regex, StringUtils.EMPTY);
+        return replaceFirst(text, regex, StringUtil.EMPTY);
     }
 
     // Replacing
@@ -5101,7 +5101,7 @@ public class StringUtils {
      * @since 3.5 Changed {@code null} reference passed to this method is a no-op.
      */
     public static String removePattern(final String source, final String regex) {
-        return replacePattern(source, regex, StringUtils.EMPTY);
+        return replacePattern(source, regex, StringUtil.EMPTY);
     }
 
     /**
@@ -5881,7 +5881,7 @@ public class StringUtils {
      * @param str       the String to chomp from, may be null
      * @param separator separator String, may be null
      * @return String without trailing separator, {@code null} if null String input
-     * @deprecated This feature will be removed in Lang 4.0, use {@link StringUtils#removeEnd(String, String)} instead
+     * @deprecated This feature will be removed in Lang 4.0, use {@link StringUtil#removeEnd(String, String)} instead
      */
     @Deprecated
     public static String chomp(final String str, final String separator) {
@@ -6609,7 +6609,7 @@ public class StringUtils {
      * @return the changed String, {@code null} if null String input
      */
     public static String swapCase(final String str) {
-        if (StringUtils.isEmpty(str)) {
+        if (StringUtil.isEmpty(str)) {
             return str;
         }
 
@@ -6657,7 +6657,7 @@ public class StringUtils {
         }
         int count = 0;
         int idx = 0;
-        while ((idx = CharSequenceUtils.indexOf(str, sub, idx)) != INDEX_NOT_FOUND) {
+        while ((idx = CharSequenceUtil.indexOf(str, sub, idx)) != INDEX_NOT_FOUND) {
             count++;
             idx += sub.length();
         }
@@ -7079,7 +7079,7 @@ public class StringUtils {
      * @param str the String to check, may be null
      * @return the passed in String, or the empty String if it
      * was {@code null}
-     * @see ObjectUtils#toString(Object)
+     * @see ObjectUtil#toString(Object)
      * @see String#valueOf(Object)
      */
     public static String defaultString(final String str) {
@@ -7100,7 +7100,7 @@ public class StringUtils {
      * @param defaultStr the default String to return
      *                   if the input is {@code null}, may be null
      * @return the passed in String, or the default if it was {@code null}
-     * @see ObjectUtils#toString(Object, String)
+     * @see ObjectUtil#toString(Object, String)
      * @see String#valueOf(Object)
      */
     public static String defaultString(final String str, final String defaultStr) {
@@ -7124,7 +7124,7 @@ public class StringUtils {
      * @param defaultStr the default CharSequence to return
      *                   if the input is whitespace, empty ("") or {@code null}, may be null
      * @return the passed in CharSequence, or the default
-     * @see StringUtils#defaultString(String, String)
+     * @see StringUtil#defaultString(String, String)
      */
     public static <T extends CharSequence> T defaultIfBlank(final T str, final T defaultStr) {
         return isBlank(str) ? defaultStr : str;
@@ -7147,7 +7147,7 @@ public class StringUtils {
      * @param defaultStr the default CharSequence to return
      *                   if the input is empty ("") or {@code null}, may be null
      * @return the passed in CharSequence, or the default
-     * @see StringUtils#defaultString(String, String)
+     * @see StringUtil#defaultString(String, String)
      */
     public static <T extends CharSequence> T defaultIfEmpty(final T str, final T defaultStr) {
         return isEmpty(str) ? defaultStr : str;
@@ -7249,7 +7249,7 @@ public class StringUtils {
         // could implement manually, but simple way is to reuse other,
         // probably slower, methods.
         final String[] strs = split(str, separatorChar);
-        ArrayUtils.reverse(strs);
+        ArrayUtil.reverse(strs);
         return join(strs, separatorChar);
     }
 
@@ -8177,7 +8177,7 @@ public class StringUtils {
         if (prefix.length() > str.length()) {
             return false;
         }
-        return CharSequenceUtils.regionMatches(str, ignoreCase, 0, prefix, 0, prefix.length());
+        return CharSequenceUtil.regionMatches(str, ignoreCase, 0, prefix, 0, prefix.length());
     }
 
     /**
@@ -8198,12 +8198,12 @@ public class StringUtils {
      * @param searchStrings the case-sensitive CharSequence prefixes, may be empty or contain {@code null}
      * @return {@code true} if the input {@code sequence} is {@code null} AND no {@code searchStrings} are provided, or
      * the input {@code sequence} begins with any of the provided case-sensitive {@code searchStrings}.
-     * @see StringUtils#startsWith(CharSequence, CharSequence)
+     * @see StringUtil#startsWith(CharSequence, CharSequence)
      * @since 2.5
      * @since 3.0 Changed signature from startsWithAny(String, String[]) to startsWithAny(CharSequence, CharSequence...)
      */
     public static boolean startsWithAny(final CharSequence sequence, final CharSequence... searchStrings) {
-        if (isEmpty(sequence) || ArrayUtils.isEmpty(searchStrings)) {
+        if (isEmpty(sequence) || ArrayUtil.isEmpty(searchStrings)) {
             return false;
         }
         for (final CharSequence searchString : searchStrings) {
@@ -8291,7 +8291,7 @@ public class StringUtils {
             return false;
         }
         final int strOffset = str.length() - suffix.length();
-        return CharSequenceUtils.regionMatches(str, ignoreCase, strOffset, suffix, 0, suffix.length());
+        return CharSequenceUtil.regionMatches(str, ignoreCase, strOffset, suffix, 0, suffix.length());
     }
 
     /**
@@ -8383,11 +8383,11 @@ public class StringUtils {
      * @param searchStrings the case-sensitive CharSequences to find, may be empty or contain {@code null}
      * @return {@code true} if the input {@code sequence} is {@code null} AND no {@code searchStrings} are provided, or
      * the input {@code sequence} ends in any of the provided case-sensitive {@code searchStrings}.
-     * @see StringUtils#endsWith(CharSequence, CharSequence)
+     * @see StringUtil#endsWith(CharSequence, CharSequence)
      * @since 3.0
      */
     public static boolean endsWithAny(final CharSequence sequence, final CharSequence... searchStrings) {
-        if (isEmpty(sequence) || ArrayUtils.isEmpty(searchStrings)) {
+        if (isEmpty(sequence) || ArrayUtil.isEmpty(searchStrings)) {
             return false;
         }
         for (final CharSequence searchString : searchStrings) {
@@ -8599,7 +8599,7 @@ public class StringUtils {
      * @throws UnsupportedEncodingException If the named charset is not supported
      * @throws NullPointerException         if the input is null
      * @since 3.1
-     * @deprecated use {@link StringUtils#toEncodedString(byte[], Charset)} instead of String constants in your code
+     * @deprecated use {@link StringUtil#toEncodedString(byte[], Charset)} instead of String constants in your code
      */
     @Deprecated
     public static String toString(final byte[] bytes, final String charsetName) throws UnsupportedEncodingException {

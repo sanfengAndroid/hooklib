@@ -16,10 +16,10 @@
 
 package org.sfandroid.hooklib.reflect;
 
-import org.sfandroid.hooklib.utils.ArrayUtils;
+import org.sfandroid.hooklib.utils.ArrayUtil;
 import org.sfandroid.hooklib.utils.Builder;
-import org.sfandroid.hooklib.utils.ClassUtils;
-import org.sfandroid.hooklib.utils.ObjectUtils;
+import org.sfandroid.hooklib.utils.ClassUtil;
+import org.sfandroid.hooklib.utils.ObjectUtil;
 import org.sfandroid.hooklib.utils.Validate;
 
 import java.lang.reflect.Array;
@@ -44,7 +44,7 @@ import java.util.Set;
  *
  * @since 3.0
  */
-public class TypeUtils {
+public class TypeUtil {
 
     /**
      * A wildcard instance matching {@code ?}.
@@ -60,7 +60,7 @@ public class TypeUtils {
      * constructor is public to permit tools that require a JavaBean instance to
      * operate.</p>
      */
-    public TypeUtils() {
+    public TypeUtil() {
         super();
     }
 
@@ -68,7 +68,7 @@ public class TypeUtils {
      * <p>Checks if the subject type may be implicitly cast to the target type
      * following the Java generics rules. If both types are {@link Class}
      * objects, the method returns the result of
-     * {@link ClassUtils#isAssignable(Class, Class)}.</p>
+     * {@link ClassUtil#isAssignable(Class, Class)}.</p>
      *
      * @param type   the subject type to be assigned to the target type
      * @param toType the target type
@@ -139,7 +139,7 @@ public class TypeUtils {
 
         if (type instanceof Class<?>) {
             // just comparing two classes
-            return ClassUtils.isAssignable((Class<?>) type, toClass);
+            return ClassUtil.isAssignable((Class<?>) type, toClass);
         }
 
         if (type instanceof ParameterizedType) {
@@ -682,7 +682,7 @@ public class TypeUtils {
             }
 
             // work with wrapper the wrapper class instead of the primitive
-            cls = ClassUtils.primitiveToWrapper(cls);
+            cls = ClassUtil.primitiveToWrapper(cls);
         }
 
         // create a copy of the incoming map, or an empty one if it's null
@@ -1128,7 +1128,7 @@ public class TypeUtils {
     /**
      * Get a type representing {@code type} with variable assignments "unrolled."
      *
-     * @param typeArguments as from {@link TypeUtils#getTypeArguments(Type, Class)}
+     * @param typeArguments as from {@link TypeUtil#getTypeArguments(Type, Class)}
      * @param type          the type to unroll variable assignments for
      * @return Type
      * @since 3.2
@@ -1148,7 +1148,7 @@ public class TypeUtils {
                     parameterizedTypeArguments = typeArguments;
                 } else {
                     parameterizedTypeArguments = new HashMap<TypeVariable<?>, Type>(typeArguments);
-                    parameterizedTypeArguments.putAll(TypeUtils.getTypeArguments(p));
+                    parameterizedTypeArguments.putAll(TypeUtil.getTypeArguments(p));
                 }
                 final Type[] args = p.getActualTypeArguments();
                 for (int i = 0; i < args.length; i++) {
@@ -1182,7 +1182,7 @@ public class TypeUtils {
         for (; i < result.length; i++) {
             final Type unrolled = unrollVariables(typeArguments, result[i]);
             if (unrolled == null) {
-                result = ArrayUtils.remove(result, i--);
+                result = ArrayUtil.remove(result, i--);
             } else {
                 result[i] = unrolled;
             }
@@ -1214,8 +1214,8 @@ public class TypeUtils {
         }
         if (type instanceof WildcardType) {
             final WildcardType wild = (WildcardType) type;
-            return containsTypeVariables(TypeUtils.getImplicitLowerBounds(wild)[0])
-                    || containsTypeVariables(TypeUtils.getImplicitUpperBounds(wild)[0]);
+            return containsTypeVariables(TypeUtil.getImplicitLowerBounds(wild)[0])
+                    || containsTypeVariables(TypeUtil.getImplicitUpperBounds(wild)[0]);
         }
         return false;
     }
@@ -1266,7 +1266,7 @@ public class TypeUtils {
         } else if (owner == null) {
             useOwner = raw.getEnclosingClass();
         } else {
-            Validate.isTrue(TypeUtils.isAssignable(owner, raw.getEnclosingClass()),
+            Validate.isTrue(TypeUtil.isAssignable(owner, raw.getEnclosingClass()),
                     "%s is invalid owner type for parameterized %s", owner, raw);
             useOwner = owner;
         }
@@ -1344,7 +1344,7 @@ public class TypeUtils {
     @SuppressWarnings("deprecation")
     // ObjectUtils.equals(Object, Object) has been deprecated in 3.2
     public static boolean equals(final Type t1, final Type t2) {
-        if (ObjectUtils.equals(t1, t2)) {
+        if (ObjectUtil.equals(t1, t2)) {
             return true;
         }
         if (t1 instanceof ParameterizedType) {
@@ -1451,7 +1451,7 @@ public class TypeUtils {
         if (type instanceof GenericArrayType) {
             return genericArrayTypeToString((GenericArrayType) type);
         }
-        throw new IllegalArgumentException(ObjectUtils.identityToString(type));
+        throw new IllegalArgumentException(ObjectUtil.identityToString(type));
     }
 
     /**
@@ -1509,7 +1509,7 @@ public class TypeUtils {
      * @since 3.2
      */
     public static <T> Typed<T> wrap(final Class<T> type) {
-        return TypeUtils.<T>wrap((Type) type);
+        return TypeUtil.<T>wrap((Type) type);
     }
 
     /**
@@ -1706,7 +1706,7 @@ public class TypeUtils {
          */
         @Override
         public String toString() {
-            return TypeUtils.toString(this);
+            return TypeUtil.toString(this);
         }
 
         /**
@@ -1714,7 +1714,7 @@ public class TypeUtils {
          */
         @Override
         public boolean equals(final Object obj) {
-            return obj == this || obj instanceof GenericArrayType && TypeUtils.equals(this, (GenericArrayType) obj);
+            return obj == this || obj instanceof GenericArrayType && TypeUtil.equals(this, (GenericArrayType) obj);
         }
 
         /**
@@ -1780,7 +1780,7 @@ public class TypeUtils {
          */
         @Override
         public String toString() {
-            return TypeUtils.toString(this);
+            return TypeUtil.toString(this);
         }
 
         /**
@@ -1788,7 +1788,7 @@ public class TypeUtils {
          */
         @Override
         public boolean equals(final Object obj) {
-            return obj == this || obj instanceof ParameterizedType && TypeUtils.equals(this, ((ParameterizedType) obj));
+            return obj == this || obj instanceof ParameterizedType && TypeUtil.equals(this, ((ParameterizedType) obj));
         }
 
         /**
@@ -1800,7 +1800,7 @@ public class TypeUtils {
             int result = 71 << 4;
             result |= raw.hashCode();
             result <<= 4;
-            result |= ObjectUtils.hashCode(useOwner);
+            result |= ObjectUtil.hashCode(useOwner);
             result <<= 8;
             result |= Arrays.hashCode(typeArguments);
             return result;
@@ -1825,8 +1825,8 @@ public class TypeUtils {
          * @param lowerBounds of this type
          */
         private WildcardTypeImpl(final Type[] upperBounds, final Type[] lowerBounds) {
-            this.upperBounds = ObjectUtils.defaultIfNull(upperBounds, EMPTY_BOUNDS);
-            this.lowerBounds = ObjectUtils.defaultIfNull(lowerBounds, EMPTY_BOUNDS);
+            this.upperBounds = ObjectUtil.defaultIfNull(upperBounds, EMPTY_BOUNDS);
+            this.lowerBounds = ObjectUtil.defaultIfNull(lowerBounds, EMPTY_BOUNDS);
         }
 
         /**
@@ -1850,7 +1850,7 @@ public class TypeUtils {
          */
         @Override
         public String toString() {
-            return TypeUtils.toString(this);
+            return TypeUtil.toString(this);
         }
 
         /**
@@ -1858,7 +1858,7 @@ public class TypeUtils {
          */
         @Override
         public boolean equals(final Object obj) {
-            return obj == this || obj instanceof WildcardType && TypeUtils.equals(this, (WildcardType) obj);
+            return obj == this || obj instanceof WildcardType && TypeUtil.equals(this, (WildcardType) obj);
         }
 
         /**

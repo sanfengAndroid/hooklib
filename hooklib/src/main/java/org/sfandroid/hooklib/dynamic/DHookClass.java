@@ -20,8 +20,8 @@ import org.sfandroid.hooklib.annotation.HookClass;
 import org.sfandroid.hooklib.annotation.HookProcess;
 import org.sfandroid.hooklib.annotation.HookVersion;
 import org.sfandroid.hooklib.enums.HookProcessType;
-import org.sfandroid.hooklib.utils.ObjectUtils;
-import org.sfandroid.hooklib.utils.StringUtils;
+import org.sfandroid.hooklib.utils.ObjectUtil;
+import org.sfandroid.hooklib.utils.StringUtil;
 
 /**
  * 动态Hook类
@@ -62,11 +62,11 @@ public class DHookClass {
         if (hookClass == null) {
             return ret;
         }
-        if (!StringUtils.isEmpty(hookClass.value())) {
+        if (!StringUtil.isEmpty(hookClass.value())) {
             ret.name = hookClass.value();
         }
-        if (!ObjectUtils.isNullClass(hookClass.cls())) {
-            ret.type = hookClass.cls();
+        if (!ObjectUtil.isNullClass(hookClass.clazz())) {
+            ret.type = hookClass.clazz();
         }
         return ret;
     }

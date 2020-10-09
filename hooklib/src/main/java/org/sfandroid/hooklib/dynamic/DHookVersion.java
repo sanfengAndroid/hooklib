@@ -17,7 +17,7 @@
 package org.sfandroid.hooklib.dynamic;
 
 import org.sfandroid.hooklib.annotation.HookVersion;
-import org.sfandroid.hooklib.utils.ArrayUtils;
+import org.sfandroid.hooklib.utils.ArrayUtil;
 
 import java.util.Arrays;
 
@@ -33,9 +33,22 @@ public class DHookVersion {
     public long min = 0;
     public long max = 0;
 
+    private DHookVersion() {
+    }
+
+    private DHookVersion(long[] versions, long min, long max) {
+        this.values = versions;
+        this.min = min;
+        this.max = max;
+    }
+
+    public static DHookVersion create(long[] versions, long min, long max) {
+        return new DHookVersion(versions, min, max);
+    }
+
     public static DHookVersion toDVersion(HookVersion hookVersion) {
         if (hookVersion == null) {
-            return DEFAULT;
+            return null;
         }
         DHookVersion ret = new DHookVersion();
         ret.values = hookVersion.value();
@@ -44,7 +57,7 @@ public class DHookVersion {
         return optimization(ret);
     }
 
-    public static DHookVersion optimization(DHookVersion dHookVersion) {
+    private static DHookVersion optimization(DHookVersion dHookVersion) {
         // 主要优化该对象是否与默认相等
         return DEFAULT.equals(dHookVersion) ? DEFAULT : dHookVersion;
     }
@@ -76,7 +89,7 @@ public class DHookVersion {
      */
     public boolean inherit() {
         boolean inherit = false;
-        if (!ArrayUtils.isEmpty(values)) {
+        if (!ArrayUtil.isEmpty(values)) {
             for (long ver : values) {
                 if (ver < 0) {
                     inherit = true;

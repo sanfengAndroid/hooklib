@@ -17,7 +17,7 @@
 package org.sfandroid.hooklib;
 
 import org.sfandroid.hooklib.interfaces.IHookFrame;
-import org.sfandroid.hooklib.utils.ClassUtils;
+import org.sfandroid.hooklib.utils.ClassUtil;
 
 import java.lang.reflect.Member;
 
@@ -61,24 +61,24 @@ public class XC_MethodHook<Callback> {
          * @return 获取方法返回值
          */
         public Object getResult() {
-            throw new UnsupportedOperationException("hook param class " + ClassUtils.getName(real,
+            throw new UnsupportedOperationException("hook param class " + ClassUtil.getName(real,
                     "null") + " did not override this method getResult().");
         }
 
         public void setResult(Object result) {
-            throw new UnsupportedOperationException("hook param class " + ClassUtils.getName(real, "null") + " did not override this method setResult(Object).");
+            throw new UnsupportedOperationException("hook param class " + ClassUtil.getName(real, "null") + " did not override this method setResult(Object).");
         }
 
         public Throwable getThrowable() {
-            throw new UnsupportedOperationException("hook param class " + ClassUtils.getName(real, "null") + " did not override this method getThrowable().");
+            throw new UnsupportedOperationException("hook param class " + ClassUtil.getName(real, "null") + " did not override this method getThrowable().");
         }
 
         public void setThrowable(Throwable throwable) {
-            throw new UnsupportedOperationException("hook param class " + ClassUtils.getName(real, "null") + " did not override this method setThrowable(Throwable).");
+            throw new UnsupportedOperationException("hook param class " + ClassUtil.getName(real, "null") + " did not override this method setThrowable(Throwable).");
         }
 
         public Object getResultOrThrowable() throws Throwable {
-            throw new UnsupportedOperationException("hook param class " + ClassUtils.getName(real, "null") + " did not override this method getResultOrThrowable().");
+            throw new UnsupportedOperationException("hook param class " + ClassUtil.getName(real, "null") + " did not override this method getResultOrThrowable().");
         }
     }
 }

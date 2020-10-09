@@ -22,7 +22,7 @@ package org.sfandroid.hooklib.utils;
  * @see CharSequence
  * @since 3.0
  */
-public class CharSequenceUtils {
+public class CharSequenceUtil {
 
     private static final int NOT_FOUND = -1;
 
@@ -33,7 +33,7 @@ public class CharSequenceUtils {
      * <p>This constructor is public to permit tools that require a JavaBean
      * instance to operate.</p>
      */
-    public CharSequenceUtils() {
+    public CharSequenceUtil() {
         super();
     }
 
